@@ -27,7 +27,8 @@ const useTransactionStore = create((set, get) => ({
   //Actions
   setTransactions: (transactions) => set({ transactions }),
   setSummary: (summary) => set({ summary }),
-  setFilters: (filters) => set((state) => ({ ...state.filters, ...filters })),
+  setFilters: (filters) =>
+    set((state) => ({ filters: { ...state.filters, ...filters } })),
   setLoading: (isLoading) => set({ isLoading }),
   setError: (error) => set({ error }),
   clearFilters: () =>

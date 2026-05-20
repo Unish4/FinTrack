@@ -2,7 +2,7 @@
 import { useEffect } from "react";
 import { Routes, Route } from "react-router";
 import { SignIn, SignUp, useUser, useAuth } from "@clerk/react";
-import { Toaster } from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 
 // Layouts
 import MainLayout from "./layouts/MainLayout.jsx";
@@ -42,6 +42,7 @@ function App() {
           setUser(profile.data);
         } catch (error) {
           console.error("Failed to sync user:", error);
+          toast.error("Failed to sync user data. Please try again.");
         }
       } else if (!isSignedIn) {
         clearUser();

@@ -11,10 +11,9 @@ import transactionRoutes from "./routes/transactionRoutes.js";
 const app = express();
 const PORT = ENV.PORT || 3000;
 
-if (process.env.NODE_ENV === "development") {
+if (ENV.NODE_ENV === "development") {
   app.use(morgan("dev"));
 }
-
 // Middleware
 import { errorHandler } from "./middleware/errorHandler.js";
 import { connectDB } from "./config/db.js";

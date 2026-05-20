@@ -8,6 +8,7 @@ import {
   LogOut,
   Wallet,
 } from "lucide-react";
+import toast from "react-hot-toast";
 
 const navItems = [
   { to: "/", icon: LayoutDashboard, label: "Dashboard" },
@@ -21,19 +22,21 @@ function Sidebar() {
   const navigate = useNavigate();
 
   const handleLogout = async () => {
-    await signOut();
-    navigate("/sign-in");
+    try {
+      await signOut();
+      navigate("/sign-in");
+    } catch (error) {
+      console.error("Sign out failed:", error);
+      toast.error("Failed to sign out. Please try again.");
+    }
   };
-
   return (
     <aside className="w-64 min-h-screen bg-white border-r border-gray-200 flex flex-col">
       {/* Logo */}
       <div className="p-6 border-b border-gray-100">
         <div className="flex items-center gap-2">
           <Wallet className="text-indigo-600" size={24} />
-          <span className="text-lg font-semibold text-gray-900">
-            FinTrack
-          </span>
+          <span className="text-lg font-semibold text-gray-900">FinTrack</span>
         </div>
       </div>
 
@@ -64,7 +67,7 @@ function Sidebar() {
       <div className="p-4 border-t border-gray-100">
         <div className="flex items-center gap-3 mb-3">
           <img
-            src={user?.imageUrl}
+            src={user?.imageUrl || "/DefaultImage.webp"}
             alt={user?.fullName}
             className="w-8 h-8 rounded-full object-cover"
           />

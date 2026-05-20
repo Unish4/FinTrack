@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import { clerkMiddleware } from "@clerk/express";
 import { ENV } from "./config/env.js";
+import morgan from "morgan";
 
 //Import routes
 import authRoutes from "./routes/authRoutes.js";
@@ -10,6 +11,9 @@ import transactionRoutes from "./routes/transactionRoutes.js";
 const app = express();
 const PORT = ENV.PORT || 3000;
 
+if (ENV.NODE_ENV === "development") {
+  app.use(morgan("dev"));
+}
 // Middleware
 import { errorHandler } from "./middleware/errorHandler.js";
 import { connectDB } from "./config/db.js";

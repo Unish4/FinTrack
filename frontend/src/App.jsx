@@ -1,7 +1,7 @@
 // src/App.jsx
 import { useEffect } from "react";
 import { Routes, Route } from "react-router";
-import { SignIn, SignUp, useUser, useAuth } from "@clerk/react";
+import { useUser, useAuth } from "@clerk/react";
 import toast, { Toaster } from "react-hot-toast";
 
 // Layouts
@@ -12,6 +12,9 @@ import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import LoadingSpinner from "./components/LoadingSpinner.jsx";
 
 // Pages
+import HomePage from "./pages/HomePage.jsx";
+import SignInPage from "./pages/SignInPage.jsx";
+import SignUpPage from "./pages/SignUpPage.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
 import Transactions from "./pages/Transactions.jsx";
 import Analytics from "./pages/Analytics.jsx";
@@ -73,27 +76,14 @@ function App() {
       />
 
       <Routes>
-        {/* Public auth routes — Clerk's built-in UI components */}
-        <Route
-          path="/sign-in/*"
-          element={
-            <div className="min-h-screen flex items-center justify-center bg-gray-50">
-              <SignIn routing="path" path="/sign-in" />
-            </div>
-          }
-        />
-        <Route
-          path="/sign-up/*"
-          element={
-            <div className="min-h-screen flex items-center justify-center bg-gray-50">
-              <SignUp routing="path" path="/sign-up" />
-            </div>
-          }
-        />
+        {/* Public auth routes */}
+        <Route path="/" element={<HomePage />} />
+        <Route path="/sign-in/*" element={<SignInPage />} />
+        <Route path="/sign-up/*" element={<SignUpPage />} />
 
         {/* Protected routes — all wrapped in ProtectedRoute + MainLayout */}
         <Route
-          path="/"
+          path="/dashboard"
           element={
             <ProtectedRoute>
               <MainLayout>

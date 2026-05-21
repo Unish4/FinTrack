@@ -11,13 +11,13 @@ export const protect = async (req, res, next) => {
         message: "Unauthorized: No user authenticated",
       });
     }
-    let user = await User.findOne({ clerkUserID: auth.userId });
+    let user = await User.findOne({ clerkUserId: auth.userId });
 
     if (!user) {
       user = await User.create({
-        clerkUserID: auth.userId,
-        email: auth.user?.emailAddresses[0]?.emailAddress,
-        name: `${auth.user?.firstName || ""} ${auth.user?.lastName || ""}`.trim(),
+        clerkUserId: auth.userId,
+        email: auth.user?.emailAddresses?.[0]?.emailAddress || "unknown@placeholder.com",
+        name: `${auth.user?.firstName || ""} ${auth.user?.lastName || ""}`.trim() || "Unknown User",
       });
     }
 

@@ -31,7 +31,16 @@ export const registerUser = async (req, res, next) => {
       data: user,
     });
   } catch (error) {
-    res.status(500).json({ success: false, message: "Error registering user" });
+    if (error.code === 11000) {
+      // Duplicate key error (likely email)
+      const existingUser = await User.findOne({ email: req.body.email });
+      if (existingUser) {
+        // If the user exists by email but has a different clerkUserId or was missing one
+        existingUser.clerkUserId = req.body.clerkUserId;
+        await existingUser.save();
+        return res.status(200).json({ success: true, message: "User synced", data: existingUser });
+      }
+    }
     next(error);
   }
 };

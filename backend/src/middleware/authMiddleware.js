@@ -16,8 +16,12 @@ export const protect = async (req, res, next) => {
     if (!user) {
       user = await User.create({
         clerkUserId: auth.userId,
-        email: auth.user?.emailAddresses?.[0]?.emailAddress || "unknown@placeholder.com",
-        name: `${auth.user?.firstName || ""} ${auth.user?.lastName || ""}`.trim() || "Unknown User",
+        email:
+          auth.user?.emailAddresses?.[0]?.emailAddress ||
+          `${auth.userId}@placeholder.com`,
+        name:
+          `${auth.user?.firstName || ""} ${auth.user?.lastName || ""}`.trim() ||
+          "Unknown User",
       });
     }
 

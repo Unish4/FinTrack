@@ -32,13 +32,21 @@ export const registerUser = async (req, res, next) => {
     });
   } catch (error) {
     if (error.code === 11000) {
-      // Duplicate key error (likely email)
-      const existingUser = await User.findOne({ email: req.body.email });
-      if (existingUser) {
-        // If the user exists by email but has a different clerkUserId or was missing one
-        existingUser.clerkUserId = req.body.clerkUserId;
-        await existingUser.save();
-        return res.status(200).json({ success: true, message: "User synced", data: existingUser });
+      try {
+        const existingUser = await User.findOne({ email: req.body.email });
+        if (existingUser) {
+          existingUser.clerkUserId = req.body.clerkUserId;
+          await existingUser.save();
+          return res
+            .status(200)
+            .json({
+              success: true,
+              message: "User synced",
+              data: existingUser,
+            });
+        }
+      } catch (syncError) {
+        console.error("Error syncing user:", syncError);
       }
     }
     next(error);
@@ -55,13 +63,11 @@ export const getUserProfile = async (req, res, next) => {
         .json({ success: false, message: "User not found" });
     }
 
-    res
-      .status(200)
-      .json({
-        success: true,
-        message: "User profile fetched successfully",
-        data: user,
-      });
+    res.status(200).json({
+      success: true,
+      message: "User profile fetched successfully",
+      data: user,
+    });
   } catch (error) {
     res
       .status(500)

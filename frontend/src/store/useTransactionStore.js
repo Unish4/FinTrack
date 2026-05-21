@@ -1,4 +1,12 @@
 import { create } from "zustand";
+import {
+  getTransactions,
+  getTransactionSummary,
+  createTransaction,
+  updateTransaction,
+  deleteTransaction,
+} from "../services/transactionService.js";
+import toast from "react-hot-toast";
 
 const useTransactionStore = create((set, get) => ({
   //State
@@ -15,6 +23,8 @@ const useTransactionStore = create((set, get) => ({
     category: "",
     startDate: "",
     endDate: "",
+    page: 1,
+    limit: 10,
   },
   summary: {
     income: 0,
@@ -23,15 +33,97 @@ const useTransactionStore = create((set, get) => ({
   },
   isLoading: false,
   error: null,
+  isSummaryLoading: false,
 
   //Actions
-  setTransactions: (transactions) => set({ transactions }),
-  setSummary: (summary) => set({ summary }),
-  setFilters: (filters) =>
-    set((state) => ({ filters: { ...state.filters, ...filters } })),
-  setLoading: (isLoading) => set({ isLoading }),
-  setError: (error) => set({ error }),
-  clearFilters: () =>
+  fetchTransactions: async () => {
+    set({ isLoading: true, error: null });
+    try {
+      const filters = get().filters;
+      const data = await getTransactions(filters);
+      set({
+        transactions: data.data,
+        pagination: data.pagination,
+        isLoading: false,
+      });
+    } catch (error) {
+      const message =
+        error.response?.data?.message || "Failed to fetch transactions";
+      set({ isLoading: false, error: message });
+      toast.error(message);
+    }
+  },
+
+  fetchSummary: async () => {
+    set({ isSummaryLoading: true });
+    try {
+      const data = await getTransactionSummary();
+      set({ summary: data.data, isSummaryLoading: false });
+    } catch (error) {
+      set({ isSummaryLoading: false });
+      toast.error("Failed to load summary");
+    }
+  },
+
+  addTransaction: async (formData) => {
+    try {
+      await createTransaction(formData);
+      toast.success("Transaction added!");
+      get().fetchTransactions();
+      get().fetchSummary();
+    } catch (error) {
+      const message =
+        error.response?.data?.message || "Failed to add transaction";
+      toast.error(message);
+      throw error;
+    }
+  },
+
+  editTransaction: async (id, formData) => {
+    try {
+      await updateTransaction(id, formData);
+      toast.success("Transaction updated!");
+      get().fetchTransactions();
+      get().fetchSummary();
+    } catch (error) {
+      const message =
+        error.response?.data?.message || "Failed to update transaction";
+      toast.error(message);
+      throw error;
+    }
+  },
+
+  removeTransaction: async (id) => {
+    const previousTransactions = get().transactions;
+    set((state) => ({
+      transactions: state.transactions.filter((t) => t._id !== id),
+    }));
+
+    try {
+      await deleteTransaction(id);
+      toast.success("Transaction deleted!");
+      get().fetchSummary();
+    } catch (error) {
+      set({ transactions: previousTransactions });
+      toast.error("Failed to delete transaction");
+    }
+  },
+
+  setFilters: (newFilters) => {
+    set((state) => ({
+      filters: { ...state.filters, ...newFilters, page: 1 },
+    }));
+    get().fetchTransactions();
+  },
+
+  setPage: (page) => {
+    set((state) => ({
+      filters: { ...state.filters, page },
+    }));
+    get().fetchTransactions();
+  },
+
+  clearFilters: () => {
     set({
       filters: {
         search: "",
@@ -39,8 +131,12 @@ const useTransactionStore = create((set, get) => ({
         category: "",
         startDate: "",
         endDate: "",
+        page: 1,
+        limit: 10,
       },
-    }),
+    });
+    get().fetchTransactions();
+  },
 }));
 
 export default useTransactionStore;

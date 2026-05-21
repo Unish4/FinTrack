@@ -1,13 +1,23 @@
 export const formatCurrency = (amount, currency = "NPR") => {
+  if (typeof amount !== "number" || isNaN(amount)) {
+    return new Intl.NumberFormat("en-NP", {
+      style: "currency",
+      currency,
+      minimumFractionDigits: 2,
+    }).format(0);
+  }
   return new Intl.NumberFormat("en-NP", {
     style: "currency",
     currency,
     minimumFractionDigits: 2,
   }).format(amount);
 };
-
 export const formatDate = (dateString) => {
-  return new Date(dateString).toLocaleDateString("en-US", {
+  const date = new Date(dateString);
+  if (isNaN(date.getTime())) {
+    return "Invalid Date";
+  }
+  return date.toLocaleDateString("en-US", {
     year: "numeric",
     month: "short",
     day: "numeric",

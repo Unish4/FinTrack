@@ -102,13 +102,13 @@ const useTransactionStore = create((set, get) => ({
     try {
       await deleteTransaction(id);
       toast.success("Transaction deleted!");
+      get().fetchTransactions();
       get().fetchSummary();
     } catch (error) {
       set({ transactions: previousTransactions });
       toast.error("Failed to delete transaction");
     }
   },
-
   setFilters: (newFilters) => {
     set((state) => ({
       filters: { ...state.filters, ...newFilters, page: 1 },

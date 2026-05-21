@@ -15,20 +15,20 @@ const navItems = [
 ];
 
 function Sidebar({ isOpen, onClose }) {
-  const { user } = useUser(); 
+  const { user } = useUser();
 
   return (
     <>
       {/* Mobile Backdrop */}
       {isOpen && (
-        <div 
+        <div
           className="fixed inset-0 bg-gray-900/40 backdrop-blur-sm z-40 lg:hidden animate-in fade-in duration-200"
           onClick={onClose}
         />
       )}
 
       {/* Sidebar Content */}
-      <aside 
+      <aside
         className={`fixed top-0 left-0 z-50 h-screen w-64 bg-white border-r border-gray-100 flex flex-col shadow-xl lg:shadow-none transition-transform duration-300 ease-in-out lg:translate-x-0 ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
@@ -40,16 +40,18 @@ function Sidebar({ isOpen, onClose }) {
               <div className="p-2 bg-indigo-600 rounded-xl shadow-sm">
                 <Wallet className="text-white" size={20} />
               </div>
-              <span className="text-xl font-bold text-gray-900 tracking-tight">FinTrack</span>
+              <span className="text-xl font-bold text-gray-900 tracking-tight">
+                FinTrack
+              </span>
             </div>
-            
             {/* Mobile Close Button */}
-            <button 
+            <button
               onClick={onClose}
+              aria-label="Close navigation menu"
               className="lg:hidden p-2 rounded-xl text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
             >
               <X size={20} />
-            </button>
+            </button>{" "}
           </div>
         </div>
 
@@ -64,9 +66,9 @@ function Sidebar({ isOpen, onClose }) {
               to={to}
               onClick={() => {
                 // Auto close on mobile when clicking a link
-                if (window.innerWidth < 1024) onClose(); 
+                if (window.innerWidth < 1024) onClose();
               }}
-              end={to === "/"} 
+              end={to === "/dashboard"}
               className={({ isActive }) =>
                 `group flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-semibold transition-all duration-200 relative overflow-hidden ${
                   isActive
@@ -81,8 +83,10 @@ function Sidebar({ isOpen, onClose }) {
                   {isActive && (
                     <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-8 bg-indigo-600 rounded-r-full" />
                   )}
-                  
-                  <div className={`transition-transform duration-200 ${isActive ? "" : "group-hover:scale-110"}`}>
+
+                  <div
+                    className={`transition-transform duration-200 ${isActive ? "" : "group-hover:scale-110"}`}
+                  >
                     <Icon size={18} strokeWidth={isActive ? 2.5 : 2} />
                   </div>
                   <span>{label}</span>

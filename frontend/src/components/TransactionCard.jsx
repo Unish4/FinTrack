@@ -1,5 +1,13 @@
 import { useState } from "react";
-import { Pencil, Trash2, Receipt, ArrowUpRight, ArrowDownRight, Calendar, Tag } from "lucide-react";
+import {
+  Pencil,
+  Trash2,
+  Receipt,
+  ArrowUpRight,
+  ArrowDownRight,
+  Calendar,
+  Tag,
+} from "lucide-react";
 import { formatCurrency, formatRelativeDate } from "../utils/formatters.js";
 import useTransactionStore from "../store/useTransactionStore.js";
 
@@ -14,32 +22,31 @@ function TransactionCard({ transaction, onEdit }) {
 
     setIsDeleting(true);
     await removeTransaction(transaction._id);
-    setIsDeleting(false);
+    // Component may unmount after deletion, so skip state update
   };
-
   return (
-    <div
-      className="group flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 p-4 md:p-5 bg-white rounded-2xl border border-gray-100 hover:border-indigo-100 hover:shadow-md hover:shadow-indigo-50/50 transition-all duration-300 relative overflow-hidden"
-    >
+    <div className="group flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 p-4 md:p-5 bg-white rounded-2xl border border-gray-100 hover:border-indigo-100 hover:shadow-md hover:shadow-indigo-50/50 transition-all duration-300 relative overflow-hidden">
       {/* Decorative Accent Line */}
-      <div 
+      <div
         className={`absolute left-0 top-0 bottom-0 w-1 sm:w-1.5 transition-colors duration-300 ${
-          isIncome ? "bg-emerald-400 group-hover:bg-emerald-500" : "bg-red-400 group-hover:bg-red-500"
-        }`} 
+          isIncome
+            ? "bg-emerald-400 group-hover:bg-emerald-500"
+            : "bg-red-400 group-hover:bg-red-500"
+        }`}
       />
 
       <div className="flex items-center justify-between w-full sm:w-auto">
         {/* Icon Circle */}
-        <div 
+        <div
           className={`w-10 h-10 md:w-12 md:h-12 rounded-xl flex items-center justify-center shrink-0 ml-1 sm:ml-0 transition-colors duration-300 ${
-            isIncome 
-              ? "bg-emerald-50 text-emerald-600 group-hover:bg-emerald-100" 
+            isIncome
+              ? "bg-emerald-50 text-emerald-600 group-hover:bg-emerald-100"
               : "bg-red-50 text-red-500 group-hover:bg-red-100"
           }`}
         >
           {isIncome ? <ArrowUpRight size={20} /> : <ArrowDownRight size={20} />}
         </div>
-        
+
         {/* Show amount top right on mobile only */}
         <span
           className={`sm:hidden text-lg font-bold tracking-tight ${
@@ -56,18 +63,20 @@ function TransactionCard({ transaction, onEdit }) {
         <p className="text-base font-semibold text-gray-900 truncate mb-1">
           {transaction.description}
         </p>
-        
+
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-0.5">
           <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-gray-50 text-gray-500 border border-gray-100">
             <Tag size={12} className="opacity-70" />
             <span className="text-xs font-medium">{transaction.category}</span>
           </div>
-          
+
           <div className="flex items-center gap-1.5 text-gray-400">
             <Calendar size={12} className="opacity-70" />
-            <span className="text-xs font-medium">{formatRelativeDate(transaction.date)}</span>
+            <span className="text-xs font-medium">
+              {formatRelativeDate(transaction.date)}
+            </span>
           </div>
-          
+
           {transaction.receipt?.url && (
             <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-600">
               <Receipt size={12} />

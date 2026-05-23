@@ -7,6 +7,7 @@ import morgan from "morgan";
 //Import routes
 import authRoutes from "./routes/authRoutes.js";
 import transactionRoutes from "./routes/transactionRoutes.js";
+import categoryRoutes from "./routes/categoryRoutes.js";
 
 const app = express();
 const PORT = ENV.PORT || 3000;
@@ -43,6 +44,7 @@ app.get("/api/health", (req, res) => {
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/transactions", transactionRoutes);
+app.use("/api/categories", categoryRoutes);
 
 app.use((req, res) => {
   res.status(404).json({

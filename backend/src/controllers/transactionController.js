@@ -1,11 +1,6 @@
 // Transaction controller with all CRUD operations
 import Transaction from "../models/Transaction.js";
 
-/**
- * POST /api/transactions
- * Create a new transaction
- * Body: { amount, type, category, description, date }
- */
 export const createTransaction = async (req, res, next) => {
   try {
     const { amount, type, category, description, date } = req.body;
@@ -46,14 +41,17 @@ export const createTransaction = async (req, res, next) => {
   }
 };
 
-/**
- * GET /api/transactions
- * Get all transactions for user (with optional search & filters)
- * Query params: ?search=keyword&type=expense&category=Food&page=1&limit=10
- */
 export const getTransactions = async (req, res, next) => {
   try {
-    const { search, type, category, page = 1, limit = 10 } = req.query;
+    const {
+      search,
+      type,
+      category,
+      page = 1,
+      limit = 10,
+      startDate,
+      endDate,
+    } = req.query;
 
     // Build filter object
     const filter = { userId: req.user.id };
@@ -69,6 +67,16 @@ export const getTransactions = async (req, res, next) => {
     if (search) {
       // Search in description (case-insensitive)
       filter.description = { $regex: search, $options: "i" };
+    }
+
+    if (startDate || endDate) {
+      filter.date = {};
+      if (startDate) filter.date.$gte = new Date(startDate);
+      if (endDate) {
+        const end = new Date(endDate);
+        end.setHours(23, 59, 59, 999);
+        filter.date.$lte = end;
+      }
     }
 
     // Calculate pagination

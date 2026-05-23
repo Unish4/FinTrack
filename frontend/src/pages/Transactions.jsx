@@ -13,6 +13,7 @@ import TransactionCard from "../components/TransactionCard.jsx";
 import TransactionModal from "../components/TransactionModal.jsx";
 import LoadingSpinner from "../components/LoadingSpinner.jsx";
 import EmptyState from "../components/EmptyState";
+import FilterBar from "../components/FilterBar.jsx";
 
 function Transactions() {
   const {
@@ -77,7 +78,7 @@ function Transactions() {
 
       {/* Search & Filters */}
       <div className="flex flex-col sm:flex-row gap-4 mb-8 relative z-10 w-full lg:w-auto">
-        {/* Add any search or filter components here if needed in the future */}
+        <FilterBar />
       </div>
 
       {/* Content */}
@@ -104,27 +105,25 @@ function Transactions() {
           actionLabel="Add Transaction"
           onAction={handleOpenAdd}
         />
+      ) : // Transaction list
+      transactions.length === 0 ? (
+        <EmptyState
+          icon={FileText}
+          title="No transactions yet"
+          description="Start logging your income and expenses to see them appear here."
+          actionLabel="Add Transaction"
+          onAction={() => setIsModalOpen(true)}
+        />
       ) : (
-        // Transaction list
-        transactions.length === 0 ? (
-          <EmptyState
-            icon={FileText}
-            title="No transactions yet"
-            description="Start logging your income and expenses to see them appear here."
-            actionLabel="Add Transaction"
-            onAction={() => setIsModalOpen(true)}
-          />
-        ) : (
-          <div className="space-y-3">
-            {transactions.map((transaction) => (
-              <TransactionCard
-                key={transaction._id}
-                transaction={transaction}
-                onEdit={handleOpenEdit}
-              />
-            ))}
-          </div>
-        )
+        <div className="space-y-3">
+          {transactions.map((transaction) => (
+            <TransactionCard
+              key={transaction._id}
+              transaction={transaction}
+              onEdit={handleOpenEdit}
+            />
+          ))}
+        </div>
       )}
 
       {/* Pagination */}

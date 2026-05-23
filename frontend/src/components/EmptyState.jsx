@@ -3,7 +3,7 @@ import { Plus } from "lucide-react";
 function EmptyState({ icon: Icon, title, description, actionLabel, onAction }) {
   return (
     <div
-      className="flex flex-col items-center justify-center py-20
+      className="flex flex-col items-center justify-center py-20 px-20
                     border-2 border-dashed border-gray-200 rounded-2xl bg-gray-50"
     >
       {Icon && (

@@ -11,10 +11,10 @@ import {
 import useTransactionStore from "../store/useTransactionStore.js";
 import TransactionCard from "../components/TransactionCard.jsx";
 import TransactionModal from "../components/TransactionModal.jsx";
-import LoadingSpinner from "../components/LoadingSpinner.jsx";
 import EmptyState from "../components/EmptyState";
 import FilterBar from "../components/FilterBar.jsx";
 import ReceiptUploader from "../components/ReceiptUploader.jsx";
+import { TransactionSkeleton } from "../components/Skeleton.jsx";
 
 function Transactions() {
   const {
@@ -93,8 +93,10 @@ function Transactions() {
 
       {/* Content */}
       {isLoading ? (
-        <div className="py-24 flex justify-center">
-          <LoadingSpinner />
+        <div className="space-y-2">
+          {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+            <TransactionSkeleton key={i} />
+          ))}
         </div>
       ) : error ? (
         <div className="text-center py-16 bg-red-50 rounded-2xl border border-red-100 flex flex-col items-center shadow-sm">

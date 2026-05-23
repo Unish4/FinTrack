@@ -13,10 +13,10 @@ import { useEffect, useState } from "react";
 
 import { formatCurrency } from "../../utils/formatters.js";
 
-import LoadingSpinner from "../LoadingSpinner.jsx";
 import EmptyState from "../EmptyState.jsx";
 
 import { TrendingUp } from "lucide-react";
+import { ChartSkeleton } from "../Skeleton.jsx";
 
 function CustomTooltip({ active, payload, label }) {
   if (!active || !payload || !payload.length) return null;
@@ -122,8 +122,10 @@ function IncomeExpenseChart({ data, isLoading }) {
       </div>
 
       {isLoading ? (
-        <div className="h-80 flex items-center justify-center">
-          <LoadingSpinner />
+        <div className="grid grid-cols-3 gap-4 mb-8">
+          {[1, 2, 3].map((i) => (
+            <ChartSkeleton key={i} />
+          ))}
         </div>
       ) : !hasData ? (
         <div className="h-80 flex items-center justify-center">

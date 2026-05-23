@@ -1,11 +1,9 @@
 import { useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import useAnalyticsStore from "../store/useAnalyticsStore.js";
-
 import MonthlyChart from "../components/charts/MonthlyChart.jsx";
 import CategoryPieChart from "../components/charts/CategoryPieChart.jsx";
 import IncomeExpenseChart from "../components/charts/IncomeExpenseChart.jsx";
-
 import { formatCurrency } from "../utils/formatters.js";
 
 function Analytics() {

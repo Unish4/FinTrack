@@ -11,10 +11,10 @@ import { useState, useEffect } from "react";
 
 import { formatCurrency } from "../../utils/formatters.js";
 
-import LoadingSpinner from "../LoadingSpinner.jsx";
 import EmptyState from "../EmptyState.jsx";
 
 import { PieChart as PieIcon } from "lucide-react";
+import { SummaryCardSkeleton } from "../Skeleton.jsx";
 
 const COLORS = [
   "#6366f1",
@@ -171,8 +171,10 @@ function CategoryPieChart({ expenseData, incomeData, isLoading }) {
       </div>
 
       {isLoading ? (
-        <div className="h-75 flex items-center justify-center">
-          <LoadingSpinner />
+        <div className="grid grid-cols-3 gap-4 mb-8">
+          {[1, 2, 3].map((i) => (
+            <SummaryCardSkeleton key={i} />
+          ))}
         </div>
       ) : !hasData ? (
         <div className="h-75 flex items-center justify-center">

@@ -3,6 +3,7 @@ import cors from "cors";
 import { clerkMiddleware } from "@clerk/express";
 import { ENV } from "./config/env.js";
 import morgan from "morgan";
+import helmet from "helmet";
 
 //Import routes
 import authRoutes from "./routes/authRoutes.js";
@@ -13,12 +14,40 @@ import receiptRoutes from "./routes/receiptRoutes.js";
 const app = express();
 const PORT = ENV.PORT || 3000;
 
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: [
+          "'self'",
+          "https://clerk.com",
+          "https://*.clerk.accounts.dev",
+        ],
+        imgSrc: [
+          "'self'",
+          "data:",
+          "https://res.cloudinary.com",
+          "https://img.clerk.com",
+        ],
+        connectSrc: [
+          "'self'",
+          "https://clerk.com",
+          "https://*.clerk.accounts.dev",
+        ],
+        frameSrc: ["'self'", "https://clerk.com"],
+      },
+    },
+  }),
+);
+
 if (ENV.NODE_ENV === "development") {
   app.use(morgan("dev"));
 }
 // Middleware
 import { errorHandler } from "./middleware/errorHandler.js";
 import { connectDB } from "./config/db.js";
+import { arcjetProtect } from './middleware/arcjetMiddleware.js';
 
 // Enable CORS for the client application, allowing credentials (cookies) to be sent
 app.use(
@@ -34,10 +63,13 @@ app.use(express.json({ limit: "10mb" }));
 //Clerk middleware to handle authentication and user sessions
 app.use(clerkMiddleware());
 
+// Arcjet middleware to protect against bots and rate limit abusive traffic
+app.use(arcjetProtect);  
+
 app.get("/api/health", (req, res) => {
   res.status(200).json({
     success: true,
-    message: "Server is running",
+    message: "FinTrack API is healthy",
     timestamp: new Date().toISOString(),
   });
 });

@@ -13,10 +13,10 @@ import { useEffect, useState } from "react";
 
 import { formatCurrency } from "../../utils/formatters.js";
 
-import LoadingSpinner from "../LoadingSpinner.jsx";
 import EmptyState from "../EmptyState.jsx";
 
 import { BarChart2 } from "lucide-react";
+import Skeleton from "../Skeleton.jsx";
 
 function CustomTooltip({ active, payload, label }) {
   if (!active || !payload || !payload.length) return null;
@@ -99,8 +99,8 @@ function MonthlyChart({ data, isLoading }) {
       </div>
 
       {isLoading ? (
-        <div className="h-80 flex items-center justify-center">
-          <LoadingSpinner />
+        <div className="h-64">
+          <Skeleton className="h-full w-full rounded-xl" />
         </div>
       ) : !hasData ? (
         <div className="h-80 flex items-center justify-center">

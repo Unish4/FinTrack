@@ -52,7 +52,11 @@ const useAnalyticsStore = create((set, get) => ({
         isCategoryLoading: false,
       });
     } catch (error) {
-      set({ isCategoryLoading: false });
+      set({
+        expenseCategoryData: [],
+        incomeCategoryData: [],
+        isCategoryLoading: false,
+      });
       toast.error("Failed to load category data");
     }
   },

@@ -22,7 +22,7 @@ function Analytics() {
 
   useEffect(() => {
     fetchAll();
-  }, [fetchAll]);
+  }, []);
 
   const yearTotals = monthlyData.reduce(
     (acc, month) => ({

@@ -14,6 +14,7 @@ import TransactionModal from "../components/TransactionModal.jsx";
 import LoadingSpinner from "../components/LoadingSpinner.jsx";
 import EmptyState from "../components/EmptyState";
 import FilterBar from "../components/FilterBar.jsx";
+import ReceiptUploader from "../components/ReceiptUploader.jsx";
 
 function Transactions() {
   const {
@@ -27,6 +28,7 @@ function Transactions() {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingTransaction, setEditingTransaction] = useState(null);
+  const [receiptTransaction, setReceiptTransaction] = useState(null);
 
   // Fetch on mount
   useEffect(() => {
@@ -46,6 +48,14 @@ function Transactions() {
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setEditingTransaction(null);
+  };
+
+  const handleOpenReceipt = (t) => {
+    setReceiptTransaction(t);
+  };
+
+  const handleCloseReceipt = () => {
+    setReceiptTransaction(null);
   };
 
   return (
@@ -121,6 +131,7 @@ function Transactions() {
               key={transaction._id}
               transaction={transaction}
               onEdit={handleOpenEdit}
+              onUploadReceipt={handleOpenReceipt}
             />
           ))}
         </div>
@@ -164,6 +175,26 @@ function Transactions() {
         onClose={handleCloseModal}
         transaction={editingTransaction}
       />
+
+      {/* Receipt Uploader Modal */}
+      {receiptTransaction && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center
+                     bg-gray-900/40 backdrop-blur-sm p-3 sm:p-4 animate-in fade-in duration-200"
+          onClick={handleCloseReceipt}
+        >
+          <div
+            className="bg-white rounded-2xl shadow-2xl ring-1 ring-black/5
+                       w-full max-w-lg max-h-[92vh] overflow-y-auto no-scrollbar"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <ReceiptUploader
+              transaction={receiptTransaction}
+              onClose={handleCloseReceipt}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

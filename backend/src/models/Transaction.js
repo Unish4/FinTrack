@@ -24,7 +24,7 @@ const transactionSchema = new mongoose.Schema(
     },
     description: {
       type: String,
-      default: [true, "Description is required"],
+      required: [true, "Description is required"],
       maxlength: [255, "Description cannot exceed 255 characters"],
     },
     date: {
@@ -32,8 +32,9 @@ const transactionSchema = new mongoose.Schema(
       default: Date.now,
     },
     receipt: {
-      type: String,
-      uploadedAt: Date,
+      url: { type: String, default: null },
+      publicId: { type: String, default: null }, 
+      uploadedAt: { type: Date, default: null },
     },
   },
   { timestamps: true },

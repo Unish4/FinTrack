@@ -7,6 +7,7 @@ import {
   deleteTransaction,
 } from "../services/transactionService.js";
 import toast from "react-hot-toast";
+import { uploadReceipt, deleteReceipt } from "../services/receiptService.js";
 
 const useTransactionStore = create((set, get) => ({
   //State
@@ -136,6 +137,46 @@ const useTransactionStore = create((set, get) => ({
       },
     });
     get().fetchTransactions();
+  },
+
+  addReceipt: async (transactionId, file) => {
+    try {
+      const data = await uploadReceipt(transactionId, file);
+      // Update just this transaction's receipt in the local array
+      set((state) => ({
+        transactions: state.transactions.map((t) =>
+          t._id === transactionId
+            ? {
+                ...t,
+                receipt: { url: data.data.url, publicId: data.data.publicId },
+              }
+            : t,
+        ),
+      }));
+      toast.success("Receipt uploaded");
+    } catch (error) {
+      const message =
+        error.response?.data?.message || "Failed to upload receipt";
+      toast.error(message);
+      throw error;
+    }
+  },
+
+  removeReceipt: async (transactionId) => {
+    try {
+      await deleteReceipt(transactionId);
+      set((state) => ({
+        transactions: state.transactions.map((t) =>
+          t._id === transactionId
+            ? { ...t, receipt: { url: null, publicId: null } }
+            : t,
+        ),
+      }));
+      toast.success("Receipt removed");
+    } catch (error) {
+      toast.error("Failed to remove receipt");
+      throw error;
+    }
   },
 }));
 

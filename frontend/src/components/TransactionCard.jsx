@@ -6,18 +6,22 @@ import {
   ArrowUpRight,
   ArrowDownRight,
   Calendar,
+  Upload,
 } from "lucide-react";
 import { formatCurrency, formatRelativeDate } from "../utils/formatters.js";
 import useTransactionStore from "../store/useTransactionStore.js";
 import Badge from "./Badge.jsx";
 import ConfirmDialog from "./ConfirmDialog.jsx";
+import ReceiptModal from "./ReceiptModal.jsx";
 
-function TransactionCard({ transaction, onEdit }) {
+function TransactionCard({ transaction, onEdit, onUploadReceipt }) {
   const { removeTransaction } = useTransactionStore();
   const [showConfirm, setShowConfirm] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [showReceiptModal, setShowReceiptModal] = useState(false);
 
   const isIncome = transaction.type === "income";
+  const hasReceipt = !!transaction.receipt?.url;
 
   const handleDeleteConfirm = async () => {
     setShowConfirm(false);
@@ -25,8 +29,6 @@ function TransactionCard({ transaction, onEdit }) {
     await removeTransaction(transaction._id);
     setIsDeleting(false);
   };
-
-  
 
   return (
     <div className="group flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 p-4 md:p-5 bg-white rounded-2xl border border-gray-100 hover:border-indigo-100 hover:shadow-md hover:shadow-indigo-50/50 transition-all duration-300 relative overflow-hidden">
@@ -83,11 +85,18 @@ function TransactionCard({ transaction, onEdit }) {
             </span>
           </div>
 
-          {transaction.receipt?.url && (
-            <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-600">
-              <Receipt size={12} />
-              <span className="text-xs font-medium">Receipt</span>
-            </div>
+          {hasReceipt && (
+            <button
+              onClick={() => setShowReceiptModal(true)}
+              className="inline-flex items-center gap-1 px-2 py-1 rounded-full
+                         text-xs font-medium text-indigo-600 bg-indigo-50
+                         border border-indigo-100 hover:bg-indigo-100
+                         transition-colors"
+              title="View receipt"
+            >
+              <Receipt size={11} />
+              <span>Receipt</span>
+            </button>
           )}
         </div>
       </div>
@@ -105,6 +114,19 @@ function TransactionCard({ transaction, onEdit }) {
 
         {/* Actions */}
         <div className="flex justify-end items-center gap-1.5 shrink-0 opacity-100 sm:opacity-0 sm:-translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 w-full sm:w-auto">
+          <button
+            onClick={() => onUploadReceipt(transaction)}
+            className={`p-1.5 rounded-lg transition-colors
+                        ${
+                          hasReceipt
+                            ? "flex-1 sm:flex-none p-2 sm:p-2.5 rounded-xl text-indigo-600 hover:text-indigo-600 focus:text-indigo-600 hover:bg-indigo-50 focus:bg-indigo-50 transition-colors flex items-center justify-center border border-gray-100 sm:border-transparent hover:border-indigo-100"
+                            : "flex-1 sm:flex-none p-2 sm:p-2.5 rounded-xl text-gray-400 hover:text-indigo-600 focus:text-indigo-600 hover:bg-indigo-50 focus:bg-indigo-50 transition-colors flex items-center justify-center border border-gray-100 sm:border-transparent hover:border-indigo-100"
+                        }`}
+            title={hasReceipt ? "Manage receipt" : "Add receipt"}
+          >
+            <Upload size={14} />
+          </button>
+
           <button
             onClick={() => onEdit(transaction)}
             className="flex-1 sm:flex-none p-2 sm:p-2.5 rounded-xl text-gray-400 hover:text-indigo-600 focus:text-indigo-600 hover:bg-indigo-50 focus:bg-indigo-50 transition-colors flex items-center justify-center border border-gray-100 sm:border-transparent hover:border-indigo-100"
@@ -131,6 +153,15 @@ function TransactionCard({ transaction, onEdit }) {
           message="Are you sure you want to delete this transaction? This action cannot be undone."
           confirmLabel="Delete"
           isDangerous={true}
+        />
+      )}
+
+      {showReceiptModal && (
+        <ReceiptModal
+          isOpen={showReceiptModal}
+          onClose={() => setShowReceiptModal(false)}
+          url={transaction.receipt.url}
+          description={`Receipt for ${transaction.description}`}
         />
       )}
     </div>

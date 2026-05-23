@@ -52,7 +52,7 @@ function ReceiptModal({ isOpen, onClose, url, description }) {
           </div>
         </div>
         <div className="p-3 sm:p-4 bg-gray-50">
-          <div className="rounded-2xl border border-gray-200 bg-white overflow-hidden flex items-center justify-center min-h-[240px] sm:min-h-[320px] max-h-[70vh]">
+          <div className="rounded-2xl border border-gray-200 bg-white overflow-hidden flex items-center justify-center min-h-60 sm:min-h-80 max-h-[70vh]">
             <img
               src={url}
               alt={description || "Receipt image"}

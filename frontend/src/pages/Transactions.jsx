@@ -1,9 +1,18 @@
 import { useState, useEffect } from "react";
-import { Plus, Wallet, ReceiptText, AlertCircle, ArrowLeft, ArrowRight } from "lucide-react";
+import {
+  Plus,
+  ArrowLeft,
+  ArrowRight,
+  FileText,
+  Wallet,
+  AlertCircle,
+  ArrowLeftRight,
+} from "lucide-react";
 import useTransactionStore from "../store/useTransactionStore.js";
 import TransactionCard from "../components/TransactionCard.jsx";
 import TransactionModal from "../components/TransactionModal.jsx";
 import LoadingSpinner from "../components/LoadingSpinner.jsx";
+import EmptyState from "../components/EmptyState";
 
 function Transactions() {
   const {
@@ -47,7 +56,9 @@ function Transactions() {
             <div className="p-2 sm:p-2.5 bg-indigo-50 rounded-xl">
               <Wallet className="text-indigo-600 w-6 h-6 sm:w-7 sm:h-7" />
             </div>
-            <h1 className="text-xl sm:text-2xl font-bold text-gray-900 tracking-tight">Transactions</h1>
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-900 tracking-tight">
+              Transactions
+            </h1>
           </div>
           <p className="text-sm text-gray-500 mt-2 sm:ml-14">
             {pagination?.total > 0
@@ -62,6 +73,11 @@ function Transactions() {
           <Plus size={18} />
           Add Transaction
         </button>
+      </div>
+
+      {/* Search & Filters */}
+      <div className="flex flex-col sm:flex-row gap-4 mb-8 relative z-10 w-full lg:w-auto">
+        {/* Add any search or filter components here if needed in the future */}
       </div>
 
       {/* Content */}
@@ -81,40 +97,48 @@ function Transactions() {
           </button>
         </div>
       ) : !transactions || transactions.length === 0 ? (
-        <div className="text-center py-20 sm:py-28 border-2 border-dashed border-gray-200 rounded-3xl bg-white shadow-sm flex flex-col items-center justify-center px-4">
-          <div className="w-20 h-20 bg-indigo-50 rounded-full flex items-center justify-center mb-5 text-indigo-500 shadow-inner">
-            <ReceiptText size={36} strokeWidth={1.5} />
-          </div>
-          <h3 className="text-xl font-bold text-gray-900 mb-2 tracking-tight">No transactions found</h3>
-          <p className="text-gray-500 text-sm max-w-sm mx-auto mb-8">
-            Get started by adding your first transaction and start tracking your expenses and income properly!
-          </p>
-          <button
-            onClick={handleOpenAdd}
-            className="flex items-center justify-center gap-2 bg-white text-indigo-600 border-2 border-indigo-100 px-6 py-3 rounded-xl text-sm font-semibold hover:bg-indigo-50 hover:border-indigo-200 transition-all duration-200 active:scale-[0.98]"
-          >
-            <Plus size={18} />
-            Record First Transaction
-          </button>
-        </div>
+        <EmptyState
+          icon={ArrowLeftRight}
+          title="No transactions yet"
+          description="Add your first income or expense to get started"
+          actionLabel="Add Transaction"
+          onAction={handleOpenAdd}
+        />
       ) : (
         // Transaction list
-        <div className="space-y-3">
-          {transactions.map((transaction) => (
-            <TransactionCard
-              key={transaction._id}
-              transaction={transaction}
-              onEdit={handleOpenEdit}
-            />
-          ))}
-        </div>
+        transactions.length === 0 ? (
+          <EmptyState
+            icon={FileText}
+            title="No transactions yet"
+            description="Start logging your income and expenses to see them appear here."
+            actionLabel="Add Transaction"
+            onAction={() => setIsModalOpen(true)}
+          />
+        ) : (
+          <div className="space-y-3">
+            {transactions.map((transaction) => (
+              <TransactionCard
+                key={transaction._id}
+                transaction={transaction}
+                onEdit={handleOpenEdit}
+              />
+            ))}
+          </div>
+        )
       )}
 
       {/* Pagination */}
       {pagination?.pages > 1 && (
         <div className="flex flex-col sm:flex-row items-center justify-between mt-8 p-4 sm:p-5 bg-white rounded-2xl border border-gray-100 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] gap-4 sm:gap-0">
           <p className="text-sm font-medium text-gray-500">
-            Showing page <span className="text-gray-900 font-bold bg-gray-50 px-2 py-1 rounded-md">{pagination.page}</span> of <span className="text-gray-900 font-bold bg-gray-50 px-2 py-1 rounded-md">{pagination.pages}</span>
+            Showing page{" "}
+            <span className="text-gray-900 font-bold bg-gray-50 px-2 py-1 rounded-md">
+              {pagination.page}
+            </span>{" "}
+            of{" "}
+            <span className="text-gray-900 font-bold bg-gray-50 px-2 py-1 rounded-md">
+              {pagination.pages}
+            </span>
           </p>
           <div className="flex gap-2 w-full sm:w-auto">
             <button

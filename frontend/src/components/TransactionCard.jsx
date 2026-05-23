@@ -6,24 +6,28 @@ import {
   ArrowUpRight,
   ArrowDownRight,
   Calendar,
-  Tag,
 } from "lucide-react";
 import { formatCurrency, formatRelativeDate } from "../utils/formatters.js";
 import useTransactionStore from "../store/useTransactionStore.js";
+import Badge from "./Badge.jsx";
+import ConfirmDialog from "./ConfirmDialog.jsx";
 
 function TransactionCard({ transaction, onEdit }) {
   const { removeTransaction } = useTransactionStore();
+  const [showConfirm, setShowConfirm] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
   const isIncome = transaction.type === "income";
 
-  const handleDelete = async () => {
-    if (!window.confirm("Delete this transaction?")) return;
-
+  const handleDeleteConfirm = async () => {
+    setShowConfirm(false);
     setIsDeleting(true);
     await removeTransaction(transaction._id);
-    // Component may unmount after deletion, so skip state update
+    setIsDeleting(false);
   };
+
+  
+
   return (
     <div className="group flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 p-4 md:p-5 bg-white rounded-2xl border border-gray-100 hover:border-indigo-100 hover:shadow-md hover:shadow-indigo-50/50 transition-all duration-300 relative overflow-hidden">
       {/* Decorative Accent Line */}
@@ -66,8 +70,10 @@ function TransactionCard({ transaction, onEdit }) {
 
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-0.5">
           <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-gray-50 text-gray-500 border border-gray-100">
-            <Tag size={12} className="opacity-70" />
-            <span className="text-xs font-medium">{transaction.category}</span>
+            <Badge variant={isIncome ? "income" : "expense"}>
+              {transaction.type}
+            </Badge>{" "}
+            <Badge variant="default">{transaction.category}</Badge>
           </div>
 
           <div className="flex items-center gap-1.5 text-gray-400">
@@ -102,20 +108,31 @@ function TransactionCard({ transaction, onEdit }) {
           <button
             onClick={() => onEdit(transaction)}
             className="flex-1 sm:flex-none p-2 sm:p-2.5 rounded-xl text-gray-400 hover:text-indigo-600 focus:text-indigo-600 hover:bg-indigo-50 focus:bg-indigo-50 transition-colors flex items-center justify-center border border-gray-100 sm:border-transparent hover:border-indigo-100"
-            title="Edit"
+            title="Edit transaction"
           >
             <Pencil size={16} />
           </button>
           <button
-            onClick={handleDelete}
+            onClick={() => setShowConfirm(true)}
             disabled={isDeleting}
             className="flex-1 sm:flex-none p-2 sm:p-2.5 rounded-xl text-gray-400 hover:text-red-600 focus:text-red-600 hover:bg-red-50 focus:bg-red-50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center border border-gray-100 sm:border-transparent hover:border-red-100"
-            title="Delete"
+            title="Delete transaction"
           >
             <Trash2 size={16} />
           </button>
         </div>
       </div>
+      {showConfirm && (
+        <ConfirmDialog
+          isOpen={showConfirm}
+          onConfirm={handleDeleteConfirm}
+          onCancel={() => setShowConfirm(false)}
+          title="Delete Transaction"
+          message="Are you sure you want to delete this transaction? This action cannot be undone."
+          confirmLabel="Delete"
+          isDangerous={true}
+        />
+      )}
     </div>
   );
 }

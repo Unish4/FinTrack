@@ -6,14 +6,16 @@ import {
   ArrowRight,
   ArrowUpRight,
   ArrowDownRight,
-  Tag,
   Calendar,
   Receipt,
+  FileText,
 } from "lucide-react";
 import { Link } from "react-router";
 import useTransactionStore from "../store/useTransactionStore.js";
 import { formatCurrency, formatRelativeDate } from "../utils/formatters.js";
 import LoadingSpinner from "../components/LoadingSpinner.jsx";
+import EmptyState from "../components/EmptyState";
+import Badge from "../components/Badge.jsx";
 
 function Dashboard() {
   const {
@@ -30,39 +32,68 @@ function Dashboard() {
     fetchTransactions();
   }, [fetchSummary, fetchTransactions]);
 
+  const income = summary?.income || 0;
+  const expense = summary?.expense || 0;
+  const balance = summary?.balance || 0;
+
+  const incomeTransactions = transactions.filter(
+    (t) => t.type === "income",
+  ).length;
+
+  const expenseTransactions = transactions.filter(
+    (t) => t.type === "expense",
+  ).length;
+
+  const savingsRate =
+    income > 0
+      ? Math.max(0, Math.round(((income - expense) / income) * 100))
+      : 0;
+
+  const isPositiveBalance = balance >= 0;
+
   const summaryCards = [
     {
       label: "Total Income",
-      value: formatCurrency(summary?.income || 0),
+      value: formatCurrency(income),
       icon: TrendingUp,
+
       color: "text-emerald-600",
       bg: "bg-emerald-50",
       border: "border-emerald-100/60",
       glow: "shadow-[0_4px_20px_-4px_rgba(16,185,129,0.15)]",
+
+      sub: `${incomeTransactions} transactions`,
     },
+
     {
       label: "Total Expenses",
-      value: formatCurrency(summary?.expense || 0),
+      value: formatCurrency(expense),
       icon: TrendingDown,
+
       color: "text-red-500",
       bg: "bg-red-50",
       border: "border-red-100/60",
       glow: "shadow-[0_4px_20px_-4px_rgba(239,68,68,0.15)]",
+
+      sub: `${expenseTransactions} transactions`,
     },
+
     {
       label: "Net Balance",
-      value: formatCurrency(summary?.balance || 0),
+      value: formatCurrency(balance),
       icon: Wallet,
-      color: (summary?.balance || 0) >= 0 ? "text-indigo-600" : "text-red-500",
-      bg: (summary?.balance || 0) >= 0 ? "bg-indigo-50" : "bg-red-50",
-      border:
-        (summary?.balance || 0) >= 0
-          ? "border-indigo-100/60"
-          : "border-red-100/60",
-      glow:
-        (summary?.balance || 0) >= 0
-          ? "shadow-[0_4px_20px_-4px_rgba(99,102,241,0.15)]"
-          : "shadow-[0_4px_20px_-4px_rgba(239,68,68,0.15)]",
+
+      color: isPositiveBalance ? "text-indigo-600" : "text-red-500",
+
+      bg: isPositiveBalance ? "bg-indigo-50" : "bg-red-50",
+
+      border: isPositiveBalance ? "border-indigo-100/60" : "border-red-100/60",
+
+      glow: isPositiveBalance
+        ? "shadow-[0_4px_20px_-4px_rgba(99,102,241,0.15)]"
+        : "shadow-[0_4px_20px_-4px_rgba(239,68,68,0.15)]",
+
+      sub: `${savingsRate}% savings rate`,
     },
   ];
 
@@ -80,19 +111,21 @@ function Dashboard() {
   return (
     <div className="max-w-5xl mx-auto pb-12">
       {/* Page Header */}
-      <div className="mb-8">
-        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight">
-          Overview
-        </h1>
-        <p className="text-base text-gray-500 mt-1">
-          Here is a summary of your financial activity
-        </p>
+      <div className="mb-8 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+        <div>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight">
+            {getGreeting()} 👋
+          </h1>
+          <p className="text-base text-gray-500 mt-1">
+            Here is a summary of your financial activity
+          </p>
+        </div>
       </div>
 
       {/* Summary cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 mb-12">
         {summaryCards.map(
-          ({ label, value, icon: Icon, color, bg, border, glow }) => (
+          ({ label, value, icon: Icon, color, bg, border, glow, sub }) => (
             <div
               key={label}
               className={`p-6 sm:p-7 rounded-3xl border bg-white ${border} ${glow} hover:-translate-y-1 transition-all duration-300 relative overflow-hidden group`}
@@ -112,6 +145,7 @@ function Dashboard() {
               >
                 {value}
               </p>
+              <p className="text-md text-gray-800 font-semibold">{sub}</p>
             </div>
           ),
         )}
@@ -135,24 +169,14 @@ function Dashboard() {
           </Link>
         </div>
 
-        {!transactions || transactions.length === 0 ? (
-          <div className="bg-white rounded-3xl border border-gray-100 p-12 text-center shadow-sm">
-            <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4 text-gray-400">
-              <Wallet size={28} />
-            </div>
-            <p className="text-gray-900 font-bold text-lg mb-1">
-              No transactions yet
-            </p>
-            <p className="text-gray-500 text-sm mb-6 max-w-sm mx-auto">
-              Start logging your income and expenses to see them appear here.
-            </p>
-            <Link
-              to="/transactions"
-              className="inline-flex items-center text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 px-6 py-3 rounded-xl transition-colors shadow-sm"
-            >
-              Add First Transaction
-            </Link>
-          </div>
+        {transactions.length === 0 ? (
+          <EmptyState
+            icon={FileText}
+            title="No transactions yet"
+            description="Start logging your income and expenses to see them appear here."
+            actionLabel="Add First Transaction"
+            onAction={() => (window.location.href = "/transactions")}
+          />
         ) : (
           <div className="space-y-3">
             {transactions.slice(0, 5).map((t) => {
@@ -200,12 +224,10 @@ function Dashboard() {
                       {t.description}
                     </p>
                     <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-0.5">
-                      <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-gray-50 text-gray-500 border border-gray-100">
-                        <Tag size={12} className="opacity-70" />
-                        <span className="text-xs font-medium">
-                          {t.category}
-                        </span>
-                      </div>
+                      <Badge variant={isIncome ? "income" : "expense"}>
+                        {t.type}
+                      </Badge>{" "}
+                      <Badge variant="default">{t.category}</Badge>
                       <div className="flex items-center gap-1.5 text-gray-400">
                         <Calendar size={12} className="opacity-70" />
                         <span className="text-xs font-medium">
@@ -241,4 +263,10 @@ function Dashboard() {
   );
 }
 
+function getGreeting() {
+  const hour = new Date().getHours();
+  if (hour < 12) return "Good morning";
+  if (hour < 17) return "Good afternoon";
+  return "Good evening";
+}
 export default Dashboard;

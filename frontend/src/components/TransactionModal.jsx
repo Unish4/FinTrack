@@ -48,6 +48,17 @@ function TransactionModal({ isOpen, onClose, transaction = null }) {
     syncState();
   }, [isOpen, isEditMode, transaction]);
 
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") onClose();
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen, onClose]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -244,7 +255,11 @@ function TransactionModal({ isOpen, onClose, transaction = null }) {
                   name="description"
                   value={formData.description}
                   onChange={handleChange}
-                  placeholder="What was this for?"
+                  placeholder={
+                    formData.type === "expense"
+                      ? "What was this for?"
+                      : "What was this from?"
+                  }
                   className={`w-full pl-10 pr-4 py-2.5 border rounded-xl text-sm outline-none transition-all duration-200 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 hover:border-gray-300 ${
                     errors.description
                       ? "border-red-300 bg-red-50"

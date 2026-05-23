@@ -160,7 +160,7 @@ function TransactionCard({ transaction, onEdit, onUploadReceipt }) {
         <ReceiptModal
           isOpen={showReceiptModal}
           onClose={() => setShowReceiptModal(false)}
-          url={transaction.receipt.url}
+          url={transaction.receipt?.url}
           description={`Receipt for ${transaction.description}`}
         />
       )}

@@ -6,6 +6,8 @@ import {
   updateTransaction,
   deleteTransaction,
   getTransactionSummary,
+  getMonthlySummary,
+  getCategorySummary,
 } from "../controllers/transactionController.js";
 import { protect } from "../middleware/authMiddleware.js";
 
@@ -22,6 +24,8 @@ router.get("/", getTransactions);
 
 // GET /api/transactions/summary - Get summary (income, expense, balance)
 router.get("/summary", getTransactionSummary);
+router.get("/summary/monthly", getMonthlySummary);
+router.get("/summary/by-category", getCategorySummary);
 
 // GET /api/transactions/:id - Get single transaction by ID
 router.get("/:id", getTransactionById);

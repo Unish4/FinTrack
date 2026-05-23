@@ -250,3 +250,158 @@ export const getTransactionSummary = async (req, res, next) => {
     next(error);
   }
 };
+
+// backend/src/controllers/transactionController.js
+// Add these two new controller functions at the bottom
+
+/*
+  GET /api/transactions/summary/monthly
+  Query params: ?year=2025
+
+  Returns an array of 12 months with income and expense totals.
+  Months with no transactions still appear with 0 values — this
+  ensures the chart always shows all 12 bars, not just active months.
+*/
+export const getMonthlySummary = async (req, res, next) => {
+  try {
+    const year = parseInt(req.query.year) || new Date().getFullYear();
+
+    const summary = await Transaction.aggregate([
+      {
+        /*
+          Stage 1: $match
+          Filter to only this user's transactions in the selected year.
+          We use $gte (Jan 1) and $lt (Jan 1 next year) to get the full year.
+        */
+        $match: {
+          userId: req.user.id,
+          date: {
+            $gte: new Date(`${year}-01-01`),
+            $lt: new Date(`${year + 1}-01-01`),
+          },
+        },
+      },
+      {
+        /*
+          Stage 2: $group
+          Group by month AND type together.
+          Each group gets the sum of amounts in that month+type combo.
+
+          $month extracts the month number (1-12) from the date field.
+
+          Result looks like:
+          [
+            { _id: { month: 1, type: 'income' }, total: 3500 },
+            { _id: { month: 1, type: 'expense' }, total: 450 },
+            { _id: { month: 2, type: 'income' }, total: 3500 },
+            ...
+          ]
+        */
+        $group: {
+          _id: {
+            month: { $month: "$date" },
+            type: "$type",
+          },
+          total: { $sum: "$amount" },
+        },
+      },
+      {
+        // Stage 3: Sort by month ascending
+        $sort: { "_id.month": 1 },
+      },
+    ]);
+
+    /*
+      Transform the aggregation result into a clean array of 12 months.
+      The aggregation only returns months that have data — we need all 12
+      so the chart always renders a complete year on the X axis.
+    */
+    const monthNames = [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
+    ];
+
+    // Build a map for quick lookup: { '1-income': 3500, '1-expense': 450, ... }
+    const dataMap = {};
+    summary.forEach(({ _id, total }) => {
+      dataMap[`${_id.month}-${_id.type}`] = total;
+    });
+
+    // Build the full 12-month array, filling 0 for missing months
+    const result = monthNames.map((month, index) => {
+      const monthNum = index + 1;
+      return {
+        month, // 'Jan'
+        income: dataMap[`${monthNum}-income`] || 0,
+        expense: dataMap[`${monthNum}-expense`] || 0,
+      };
+    });
+
+    res.status(200).json({
+      success: true,
+      data: result,
+      year,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getCategorySummary = async (req, res, next) => {
+  try {
+    const type = req.query.type || "expense";
+    const year = parseInt(req.query.year) || new Date().getFullYear();
+
+    const summary = await Transaction.aggregate([
+      {
+        $match: {
+          userId: req.user.id,
+          type,
+          date: {
+            $gte: new Date(`${year}-01-01`),
+            $lt: new Date(`${year + 1}-01-01`),
+          },
+        },
+      },
+      {
+        $group: {
+          _id: "$category",
+          total: { $sum: "$amount" },
+          count: { $sum: 1 },
+        },
+      },
+      {
+        $sort: { total: -1 },
+      },
+    ]);
+    const grandTotal = summary.reduce((sum, item) => sum + item.total, 0);
+
+    const result = summary.map((item) => ({
+      category: item._id,
+      total: item.total,
+      count: item.count,
+      percentage:
+        grandTotal > 0 ? Math.round((item.total / grandTotal) * 100) : 0,
+    }));
+
+    res.status(200).json({
+      success: true,
+      data: result,
+      grandTotal,
+      type,
+      year,
+    });
+  } catch (error) {
+    next(error);
+  }
+};

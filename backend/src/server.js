@@ -47,7 +47,7 @@ if (ENV.NODE_ENV === "development") {
 // Middleware
 import { errorHandler } from "./middleware/errorHandler.js";
 import { connectDB } from "./config/db.js";
-import { arcjetProtect } from './middleware/arcjetMiddleware.js';
+import { arcjetProtect } from "./middleware/arcjetMiddleware.js";
 
 // Enable CORS for the client application, allowing credentials (cookies) to be sent
 app.use(
@@ -63,9 +63,6 @@ app.use(express.json({ limit: "10mb" }));
 //Clerk middleware to handle authentication and user sessions
 app.use(clerkMiddleware());
 
-// Arcjet middleware to protect against bots and rate limit abusive traffic
-app.use(arcjetProtect);  
-
 app.get("/api/health", (req, res) => {
   res.status(200).json({
     success: true,
@@ -73,6 +70,9 @@ app.get("/api/health", (req, res) => {
     timestamp: new Date().toISOString(),
   });
 });
+
+// Arcjet middleware to protect against bots and rate limit abusive traffic
+app.use(arcjetProtect);
 
 // Routes
 app.use("/api/auth", authRoutes);

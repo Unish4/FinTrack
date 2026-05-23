@@ -117,7 +117,7 @@ function Dashboard() {
       {/* Summary cards */}
       {isSummaryLoading ? (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
-          {[1, 2, 3, 4, 5].map((i) => (
+          {[1, 2, 3].map((i) => (
             <SummaryCardSkeleton key={i} />
           ))}
         </div>

@@ -8,10 +8,12 @@ import {
   ArrowDownRight,
 } from "lucide-react";
 import useTransactionStore from "../store/useTransactionStore.js";
-import { getCategoriesForType } from "../utils/categories.js";
+import useCategoryStore from "../store/useCategoryStore.js";
 
 function TransactionModal({ isOpen, onClose, transaction = null }) {
   const { addTransaction, editTransaction } = useTransactionStore();
+  const { fetchCategories, getCategoriesByType } = useCategoryStore();
+
   const isEditMode = transaction !== null;
 
   const [formData, setFormData] = useState({
@@ -23,6 +25,10 @@ function TransactionModal({ isOpen, onClose, transaction = null }) {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState({});
+
+  useEffect(() => {
+    if (isOpen) fetchCategories();
+  }, [isOpen, fetchCategories]);
 
   useEffect(() => {
     const syncState = () => {
@@ -126,7 +132,7 @@ function TransactionModal({ isOpen, onClose, transaction = null }) {
 
   if (!isOpen) return null;
 
-  const categories = getCategoriesForType(formData.type);
+  const categories = getCategoriesByType(formData.type);
 
   return (
     <div
@@ -230,8 +236,8 @@ function TransactionModal({ isOpen, onClose, transaction = null }) {
                 >
                   <option value="">Select a category</option>
                   {categories.map((cat) => (
-                    <option key={cat} value={cat}>
-                      {cat}
+                    <option key={cat._id} value={cat.name}>
+                      {cat.icon} {cat.name}
                     </option>
                   ))}
                 </select>

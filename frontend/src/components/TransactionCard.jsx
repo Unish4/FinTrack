@@ -31,13 +31,17 @@ function TransactionCard({ transaction, onEdit, onUploadReceipt }) {
   };
 
   return (
-    <div className="group flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 p-4 md:p-5 bg-white rounded-2xl border border-gray-100 hover:border-indigo-100 hover:shadow-md hover:shadow-indigo-50/50 transition-all duration-300 relative overflow-hidden">
+    <div className={`group flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 p-4 md:p-5 rounded-2xl border transition-all duration-300 relative overflow-hidden ${
+      isIncome
+        ? "border-slate-800 bg-slate-900/40 hover:border-teal-500/30 hover:bg-teal-500/[0.04]"
+        : "border-slate-800 bg-slate-900/40 hover:border-rose-500/25 hover:bg-rose-500/[0.04]"
+    }`}>
       {/* Decorative Accent Line */}
       <div
         className={`absolute left-0 top-0 bottom-0 w-1 sm:w-1.5 transition-colors duration-300 ${
           isIncome
-            ? "bg-emerald-400 group-hover:bg-emerald-500"
-            : "bg-red-400 group-hover:bg-red-500"
+            ? "bg-teal-500 group-hover:bg-teal-400"
+            : "bg-rose-500 group-hover:bg-rose-400"
         }`}
       />
 
@@ -46,8 +50,8 @@ function TransactionCard({ transaction, onEdit, onUploadReceipt }) {
         <div
           className={`w-10 h-10 md:w-12 md:h-12 rounded-xl flex items-center justify-center shrink-0 ml-1 sm:ml-0 transition-colors duration-300 ${
             isIncome
-              ? "bg-emerald-50 text-emerald-600 group-hover:bg-emerald-100"
-              : "bg-red-50 text-red-500 group-hover:bg-red-100"
+              ? "bg-teal-500/10 text-teal-400 group-hover:bg-teal-500/20"
+              : "bg-rose-500/10 text-rose-400 group-hover:bg-rose-500/20"
           }`}
         >
           {isIncome ? <ArrowUpRight size={20} /> : <ArrowDownRight size={20} />}
@@ -56,7 +60,7 @@ function TransactionCard({ transaction, onEdit, onUploadReceipt }) {
         {/* Show amount top right on mobile only */}
         <span
           className={`sm:hidden text-lg font-bold tracking-tight ${
-            isIncome ? "text-emerald-600" : "text-red-500"
+            isIncome ? "text-teal-400" : "text-rose-400"
           }`}
         >
           {isIncome ? "+" : "-"}
@@ -66,19 +70,19 @@ function TransactionCard({ transaction, onEdit, onUploadReceipt }) {
 
       {/* Main info */}
       <div className="flex-1 min-w-0 flex flex-col justify-center pl-1 sm:pl-0">
-        <p className="text-base font-semibold text-gray-900 truncate mb-1">
+        <p className="text-base font-semibold text-slate-200 truncate mb-1">
           {transaction.description}
         </p>
 
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-0.5">
-          <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-gray-50 text-gray-500 border border-gray-100">
+          <div className="flex items-center gap-2">
             <Badge variant={isIncome ? "income" : "expense"}>
               {transaction.type}
-            </Badge>{" "}
+            </Badge>
             <Badge variant="default">{transaction.category}</Badge>
           </div>
 
-          <div className="flex items-center gap-1.5 text-gray-400">
+          <div className="flex items-center gap-1.5 text-slate-500">
             <Calendar size={12} className="opacity-70" />
             <span className="text-xs font-medium">
               {formatRelativeDate(transaction.date)}
@@ -89,8 +93,8 @@ function TransactionCard({ transaction, onEdit, onUploadReceipt }) {
             <button
               onClick={() => setShowReceiptModal(true)}
               className="inline-flex items-center gap-1 px-2 py-1 rounded-full
-                         text-xs font-medium text-indigo-600 bg-indigo-50
-                         border border-indigo-100 hover:bg-indigo-100
+                         text-xs font-medium text-cyan-400 bg-cyan-500/10
+                         border border-cyan-500/20 hover:bg-cyan-500/20
                          transition-colors"
               title="View receipt"
             >
@@ -101,11 +105,11 @@ function TransactionCard({ transaction, onEdit, onUploadReceipt }) {
         </div>
       </div>
 
-      <div className="flex items-center justify-between sm:justify-end gap-4 mt-2 sm:mt-0 pt-3 sm:pt-0 border-t sm:border-t-0 border-gray-50 pl-1 sm:pl-0">
+      <div className="flex items-center justify-between sm:justify-end gap-4 mt-2 sm:mt-0 pt-3 sm:pt-0 border-t sm:border-t-0 border-slate-800/50 pl-1 sm:pl-0">
         {/* Amount (Desktop) */}
         <span
           className={`hidden sm:block text-lg font-bold shrink-0 tracking-tight text-right ${
-            isIncome ? "text-emerald-600" : "text-red-500"
+            isIncome ? "text-teal-400" : "text-rose-400"
           }`}
         >
           {isIncome ? "+" : "-"}
@@ -119,8 +123,8 @@ function TransactionCard({ transaction, onEdit, onUploadReceipt }) {
             className={`p-1.5 rounded-lg transition-colors
                         ${
                           hasReceipt
-                            ? "flex-1 sm:flex-none p-2 sm:p-2.5 rounded-xl text-indigo-600 hover:text-indigo-600 focus:text-indigo-600 hover:bg-indigo-50 focus:bg-indigo-50 transition-colors flex items-center justify-center border border-gray-100 sm:border-transparent hover:border-indigo-100"
-                            : "flex-1 sm:flex-none p-2 sm:p-2.5 rounded-xl text-gray-400 hover:text-indigo-600 focus:text-indigo-600 hover:bg-indigo-50 focus:bg-indigo-50 transition-colors flex items-center justify-center border border-gray-100 sm:border-transparent hover:border-indigo-100"
+                            ? "flex-1 sm:flex-none p-2 sm:p-2.5 rounded-xl text-cyan-400 hover:text-cyan-300 focus:text-cyan-300 hover:bg-cyan-500/10 focus:bg-cyan-500/10 transition-colors flex items-center justify-center border border-slate-800 sm:border-transparent hover:border-cyan-500/20"
+                            : "flex-1 sm:flex-none p-2 sm:p-2.5 rounded-xl text-slate-500 hover:text-teal-400 focus:text-teal-400 hover:bg-teal-500/10 focus:bg-teal-500/10 transition-colors flex items-center justify-center border border-slate-800 sm:border-transparent hover:border-teal-500/20"
                         }`}
             title={hasReceipt ? "Manage receipt" : "Add receipt"}
           >
@@ -129,7 +133,7 @@ function TransactionCard({ transaction, onEdit, onUploadReceipt }) {
 
           <button
             onClick={() => onEdit(transaction)}
-            className="flex-1 sm:flex-none p-2 sm:p-2.5 rounded-xl text-gray-400 hover:text-indigo-600 focus:text-indigo-600 hover:bg-indigo-50 focus:bg-indigo-50 transition-colors flex items-center justify-center border border-gray-100 sm:border-transparent hover:border-indigo-100"
+            className="flex-1 sm:flex-none p-2 sm:p-2.5 rounded-xl text-slate-500 hover:text-teal-400 focus:text-teal-400 hover:bg-teal-500/10 focus:bg-teal-500/10 transition-colors flex items-center justify-center border border-slate-800 sm:border-transparent hover:border-teal-500/20"
             title="Edit transaction"
           >
             <Pencil size={16} />
@@ -137,7 +141,7 @@ function TransactionCard({ transaction, onEdit, onUploadReceipt }) {
           <button
             onClick={() => setShowConfirm(true)}
             disabled={isDeleting}
-            className="flex-1 sm:flex-none p-2 sm:p-2.5 rounded-xl text-gray-400 hover:text-red-600 focus:text-red-600 hover:bg-red-50 focus:bg-red-50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center border border-gray-100 sm:border-transparent hover:border-red-100"
+            className="flex-1 sm:flex-none p-2 sm:p-2.5 rounded-xl text-slate-500 hover:text-rose-400 focus:text-rose-400 hover:bg-rose-500/10 focus:bg-rose-500/10 transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center border border-slate-800 sm:border-transparent hover:border-rose-500/20"
             title="Delete transaction"
           >
             <Trash2 size={16} />

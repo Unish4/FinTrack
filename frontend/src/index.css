@@ -9,3 +9,10 @@
     scrollbar-width: none; /* Firefox */
   }
 }
+select::-webkit-scrollbar {
+  width: 0px;
+}
+
+select {
+  scrollbar-width: none; /* Firefox */
+}

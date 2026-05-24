@@ -1,12 +1,6 @@
 import { NavLink } from "react-router";
 import { UserButton, useUser } from "@clerk/react";
-import {
-  LayoutDashboard,
-  ArrowLeftRight,
-  BarChart2,
-  Wallet,
-  X,
-} from "lucide-react";
+import { LayoutDashboard, ArrowLeftRight, BarChart2, X } from "lucide-react";
 
 const navItems = [
   { to: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
@@ -29,18 +23,21 @@ function Sidebar({ isOpen, onClose }) {
 
       {/* Sidebar Content */}
       <aside
-        className={`fixed top-0 left-0 z-50 h-screen w-64 bg-white border-r border-gray-100 flex flex-col shadow-xl lg:shadow-none transition-transform duration-300 ease-in-out lg:translate-x-0 ${
+        className={`fixed top-0 left-0 z-50 h-screen w-64 bg-slate-950 border-r border-slate-800 flex flex-col shadow-xl lg:shadow-none transition-transform duration-300 ease-in-out lg:translate-x-0 ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
         {/* Logo */}
-        <div className="shrink-0 p-6 flex flex-col justify-center border-b border-gray-50 h-20">
+        <div className="shrink-0 p-6 flex flex-col justify-center border-b border-slate-800 h-20">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className="p-2 bg-indigo-600 rounded-xl shadow-sm">
-                <Wallet className="text-white" size={20} />
-              </div>
-              <span className="text-xl font-bold text-gray-900 tracking-tight">
+              <img
+                src="/logo.png"
+                alt="FinTrack Logo"
+                className="w-5 h-5 object-contain"
+              />
+
+              <span className="text-xl font-serif text-white tracking-tight">
                 FinTrack
               </span>
             </div>
@@ -48,7 +45,7 @@ function Sidebar({ isOpen, onClose }) {
             <button
               onClick={onClose}
               aria-label="Close navigation menu"
-              className="lg:hidden p-2 rounded-xl text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
+              className="lg:hidden p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
             >
               <X size={20} />
             </button>{" "}
@@ -57,7 +54,7 @@ function Sidebar({ isOpen, onClose }) {
 
         {/* Navigation */}
         <nav className="flex-1 overflow-y-auto p-4 space-y-1.5 hide-scrollbar">
-          <div className="mb-2 px-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">
+          <div className="mb-2 px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">
             Menu
           </div>
           {navItems.map(({ to, icon: Icon, label }) => (
@@ -72,8 +69,8 @@ function Sidebar({ isOpen, onClose }) {
               className={({ isActive }) =>
                 `group flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-semibold transition-all duration-200 relative overflow-hidden ${
                   isActive
-                    ? "text-indigo-600 bg-indigo-50"
-                    : "text-gray-500 hover:bg-gray-50 hover:text-gray-900"
+                    ? "text-teal-400 bg-teal-500/10 border border-teal-500/20"
+                    : "text-slate-400 hover:bg-slate-900/60 hover:text-slate-200"
                 }`
               }
             >
@@ -81,7 +78,7 @@ function Sidebar({ isOpen, onClose }) {
                 <>
                   {/* Active Indicator Bar */}
                   {isActive && (
-                    <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-8 bg-indigo-600 rounded-r-full" />
+                    <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-8 bg-teal-400 rounded-r-full" />
                   )}
 
                   <div
@@ -97,7 +94,7 @@ function Sidebar({ isOpen, onClose }) {
         </nav>
 
         {/* User info + logout */}
-        <div className="shrink-0 p-4 border-t border-gray-50 bg-gray-50/50 m-4 rounded-2xl border">
+        <div className="shrink-0 p-4 border-t border-slate-800 bg-slate-900/50 m-4 rounded-2xl border">
           <div className="flex items-center gap-3">
             <UserButton
               afterSignOutUrl="/"
@@ -108,10 +105,10 @@ function Sidebar({ isOpen, onClose }) {
               }}
             />
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-bold text-gray-900 truncate">
+              <p className="text-sm font-bold text-slate-200 truncate">
                 {user?.fullName || "User"}
               </p>
-              <p className="text-xs text-gray-500 font-medium truncate">
+              <p className="text-xs text-slate-400 font-medium truncate">
                 {user?.primaryEmailAddress?.emailAddress}
               </p>
             </div>

@@ -1,12 +1,12 @@
 function Skeleton({ className = "" }) {
   return (
-    <div className={`bg-gray-200 rounded-lg animate-pulse ${className}`} />
+    <div className={`bg-slate-800 rounded-lg animate-pulse ${className}`} />
   );
 }
 
 export function TransactionSkeleton() {
   return (
-    <div className="flex items-center gap-4 p-4 bg-white rounded-xl border border-gray-100">
+    <div className="flex items-center gap-4 p-4 bg-slate-900/40 rounded-xl border border-slate-800">
       <Skeleton className="w-2.5 h-2.5 rounded-full shrink-0" />
 
       {/* Text lines */}
@@ -30,7 +30,7 @@ export function TransactionSkeleton() {
 
 export function SummaryCardSkeleton() {
   return (
-    <div className="p-5 rounded-2xl border border-gray-100 bg-gray-50/40">
+    <div className="p-5 rounded-2xl border border-slate-800 bg-slate-900/60 backdrop-blur-sm">
       <div className="flex items-center justify-between mb-4">
         <Skeleton className="h-3.5 w-24 rounded" />
         <Skeleton className="w-9 h-9 rounded-xl" />
@@ -43,7 +43,7 @@ export function SummaryCardSkeleton() {
 
 export function ChartSkeleton() {
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 p-6">
+    <div className="bg-slate-900/60 rounded-2xl border border-slate-800 backdrop-blur-sm p-6">
       <div className="mb-6 space-y-1.5">
         <Skeleton className="h-4 w-36 rounded" />
         <Skeleton className="h-3 w-52 rounded" />

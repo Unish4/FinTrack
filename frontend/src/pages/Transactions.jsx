@@ -4,9 +4,9 @@ import {
   ArrowLeft,
   ArrowRight,
   FileText,
-  Wallet,
   AlertCircle,
   ArrowLeftRight,
+  Wallet,
 } from "lucide-react";
 import useTransactionStore from "../store/useTransactionStore.js";
 import TransactionCard from "../components/TransactionCard.jsx";
@@ -61,17 +61,17 @@ function Transactions() {
   return (
     <div className="max-w-4xl mx-auto pb-12">
       {/* Page header (Card Style) */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 bg-white p-5 sm:p-6 rounded-2xl border border-gray-100 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)]">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 bg-slate-900/60 p-5 sm:p-6 rounded-2xl border border-slate-800 backdrop-blur-sm shadow-sm">
         <div>
           <div className="flex items-center gap-3">
-            <div className="p-2 sm:p-2.5 bg-indigo-50 rounded-xl">
-              <Wallet className="text-indigo-600 w-6 h-6 sm:w-7 sm:h-7" />
+            <div className="p-2 sm:p-2.5 bg-teal-500/10 border border-teal-500/20 rounded-xl">
+              <Wallet alt="wallet" className="w-6 h-6 sm:w-7 sm:h-7 object-contain" />
             </div>
-            <h1 className="text-xl sm:text-2xl font-bold text-gray-900 tracking-tight">
+            <h1 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
               Transactions
             </h1>
           </div>
-          <p className="text-sm text-gray-500 mt-2 sm:ml-14">
+          <p className="text-sm text-slate-400 mt-2 sm:ml-14">
             {pagination?.total > 0
               ? `You have ${pagination.total} transaction${pagination.total !== 1 ? "s" : ""} on record`
               : "No transactions yet"}
@@ -79,7 +79,7 @@ function Transactions() {
         </div>
         <button
           onClick={handleOpenAdd}
-          className="flex justify-center items-center gap-2 bg-indigo-600 text-white px-5 py-2.5 sm:py-3 rounded-xl text-sm font-semibold hover:bg-indigo-700 transition-all duration-200 shadow-md hover:shadow-indigo-500/25 active:scale-[0.98] w-full sm:w-auto mt-2 sm:mt-0"
+          className="flex justify-center items-center gap-2 bg-teal-500 text-slate-950 px-5 py-2.5 sm:py-3 rounded-xl text-sm font-bold hover:bg-teal-400 transition-all duration-200 shadow-[0_0_30px_-6px_rgba(20,184,166,0.6)] active:scale-[0.98] w-full sm:w-auto mt-2 sm:mt-0"
         >
           <Plus size={18} />
           Add Transaction
@@ -99,12 +99,12 @@ function Transactions() {
           ))}
         </div>
       ) : error ? (
-        <div className="text-center py-16 bg-red-50 rounded-2xl border border-red-100 flex flex-col items-center shadow-sm">
-          <AlertCircle className="text-red-500 mb-3" size={32} />
-          <p className="text-red-600 font-medium px-4">{error}</p>
+        <div className="text-center py-16 bg-rose-500/10 rounded-2xl border border-rose-500/20 flex flex-col items-center shadow-sm">
+          <AlertCircle className="text-rose-400 mb-3" size={32} />
+          <p className="text-rose-400 font-medium px-4">{error}</p>
           <button
             onClick={fetchTransactions}
-            className="mt-4 px-5 py-2.5 bg-white text-sm text-red-600 font-semibold rounded-xl shadow-sm border border-red-200 hover:bg-red-50 hover:text-red-700 transition-colors"
+            className="mt-4 px-5 py-2.5 bg-slate-900 text-sm text-rose-400 font-semibold rounded-xl shadow-sm border border-rose-500/20 hover:bg-rose-500/20 hover:text-rose-300 transition-colors"
           >
             Try again
           </button>
@@ -141,14 +141,14 @@ function Transactions() {
 
       {/* Pagination */}
       {pagination?.pages > 1 && (
-        <div className="flex flex-col sm:flex-row items-center justify-between mt-8 p-4 sm:p-5 bg-white rounded-2xl border border-gray-100 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] gap-4 sm:gap-0">
-          <p className="text-sm font-medium text-gray-500">
+        <div className="flex flex-col sm:flex-row items-center justify-between mt-8 p-4 sm:p-5 bg-slate-900/60 rounded-2xl border border-slate-800 backdrop-blur-sm gap-4 sm:gap-0">
+          <p className="text-sm font-medium text-slate-400">
             Showing page{" "}
-            <span className="text-gray-900 font-bold bg-gray-50 px-2 py-1 rounded-md">
+            <span className="text-teal-400 font-bold bg-teal-500/10 px-2 py-1 rounded-md">
               {pagination.page}
             </span>{" "}
             of{" "}
-            <span className="text-gray-900 font-bold bg-gray-50 px-2 py-1 rounded-md">
+            <span className="text-teal-400 font-bold bg-teal-500/10 px-2 py-1 rounded-md">
               {pagination.pages}
             </span>
           </p>
@@ -156,14 +156,14 @@ function Transactions() {
             <button
               onClick={() => setPage(pagination.page - 1)}
               disabled={pagination.page === 1}
-              className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-4 sm:px-5 py-2.5 text-sm font-semibold border border-gray-200 rounded-xl text-gray-700 hover:bg-gray-50 hover:text-gray-900 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 shadow-sm disabled:shadow-none"
+              className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-4 sm:px-5 py-2.5 text-sm font-semibold border border-slate-700 rounded-xl text-slate-300 hover:bg-slate-800 hover:text-white disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 shadow-sm disabled:shadow-none"
             >
               <ArrowLeft size={16} /> Previous
             </button>
             <button
               onClick={() => setPage(pagination.page + 1)}
               disabled={pagination.page === pagination.pages}
-              className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-4 sm:px-5 py-2.5 text-sm font-semibold border border-gray-200 rounded-xl text-gray-700 hover:bg-gray-50 hover:text-gray-900 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 shadow-sm disabled:shadow-none"
+              className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-4 sm:px-5 py-2.5 text-sm font-semibold border border-slate-700 rounded-xl text-slate-300 hover:bg-slate-800 hover:text-white disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 shadow-sm disabled:shadow-none"
             >
               Next <ArrowRight size={16} />
             </button>

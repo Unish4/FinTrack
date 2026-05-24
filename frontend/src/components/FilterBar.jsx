@@ -53,23 +53,23 @@ function FilterBar() {
   const hasActiveFilters = activeFilterCount > 0;
 
   return (
-    <div className="bg-white border border-gray-100 rounded-2xl p-4 mb-6">
+    <div className="bg-slate-900/60 border border-slate-800 backdrop-blur-sm rounded-2xl p-4 mb-6">
       <div className="flex items-center gap-3 mb-4">
         {/* Search input */}
         <div className="relative flex-1">
           <Search
             size={15}
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500"
           />
           <input
             type="text"
             placeholder="Search transactions..."
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
-            className="w-full pl-9 pr-4 py-2.5 border border-gray-200 rounded-xl
+            className="w-full pl-9 pr-4 py-2.5 border border-slate-700 bg-slate-800/50 text-slate-200 rounded-xl
                        text-sm outline-none transition-colors
-                       focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400
-                       placeholder:text-gray-400"
+                       focus:ring-2 focus:ring-teal-500/20 focus:border-teal-400
+                       placeholder:text-slate-500"
           />
           {/* Clear search input */}
           {searchInput && (
@@ -79,7 +79,7 @@ function FilterBar() {
                 setFilters({ search: "" });
               }}
               className="absolute right-3 top-1/2 -translate-y-1/2
-                         text-gray-400 hover:text-gray-600 transition-colors"
+                         text-slate-500 hover:text-slate-300 transition-colors"
             >
               <X size={14} />
             </button>
@@ -88,13 +88,13 @@ function FilterBar() {
 
         {/* Filter indicator + clear all */}
         <div className="flex items-center gap-2 shrink-0">
-          <div className="flex items-center gap-1.5 text-sm text-gray-500">
+          <div className="flex items-center gap-1.5 text-sm text-slate-400">
             <SlidersHorizontal size={15} />
             <span className="hidden sm:inline">Filters</span>
             {hasActiveFilters && (
               <span
-                className="bg-indigo-600 text-white text-xs rounded-full
-                               w-5 h-5 flex items-center justify-center font-medium"
+                className="bg-teal-500 text-slate-950 text-xs rounded-full
+                               w-5 h-5 flex items-center justify-center font-bold"
               >
                 {activeFilterCount}
               </span>
@@ -104,7 +104,7 @@ function FilterBar() {
           {hasActiveFilters && (
             <button
               onClick={handleClearAll}
-              className="text-xs text-red-500 hover:text-red-600
+              className="text-xs text-rose-400 hover:text-rose-300
                          font-medium transition-colors"
             >
               Clear all
@@ -119,14 +119,20 @@ function FilterBar() {
           name="type"
           value={filters.type}
           onChange={handleSelectChange}
-          className="px-3 py-2 border border-gray-200 rounded-xl text-sm
-                     outline-none bg-white transition-colors
-                     focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400
-                     text-gray-600"
+          className="px-3 py-2 border border-slate-700 rounded-xl text-sm
+                     outline-none bg-slate-800/50 transition-colors
+                     focus:ring-2 focus:ring-teal-500/20 focus:border-teal-400
+                     text-slate-300"
         >
-          <option value="">All types</option>
-          <option value="income">Income</option>
-          <option value="expense">Expense</option>
+          <option className="bg-slate-900 text-slate-200" value="">
+            All types
+          </option>
+          <option className="bg-slate-900 text-slate-200" value="income">
+            Income
+          </option>
+          <option className="bg-slate-900 text-slate-200" value="expense">
+            Expense
+          </option>
         </select>
 
         {/* Category filter */}
@@ -134,26 +140,36 @@ function FilterBar() {
           name="category"
           value={filters.category}
           onChange={handleSelectChange}
-          className="px-3 py-2 border border-gray-200 rounded-xl text-sm
-                     outline-none bg-white transition-colors
-                     focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400
-                     text-gray-600"
+          className="px-3 py-2 border border-slate-700 rounded-xl text-sm
+                     outline-none bg-slate-800/50 transition-colors
+                     focus:ring-2 focus:ring-teal-500/20 focus:border-teal-400
+                     text-slate-300"
         >
-          <option value="">All categories</option>
-          <optgroup label="Expense">
+          <option className="bg-slate-900 text-slate-200" value="">
+            All categories
+          </option>
+          <optgroup className="bg-slate-900 text-slate-400" label="Expense">
             {categories
               .filter((c) => c.type === "expense")
               .map((c) => (
-                <option key={c._id} value={c.name}>
+                <option
+                  className="bg-slate-900 text-slate-200"
+                  key={c._id}
+                  value={c.name}
+                >
                   {c.icon} {c.name}
                 </option>
               ))}
           </optgroup>
-          <optgroup label="Income">
+          <optgroup className="bg-slate-900 text-slate-400" label="Income">
             {categories
               .filter((c) => c.type === "income")
               .map((c) => (
-                <option key={c._id} value={c.name}>
+                <option
+                  className="bg-slate-900 text-slate-200"
+                  key={c._id}
+                  value={c.name}
+                >
                   {c.icon} {c.name}
                 </option>
               ))}
@@ -167,10 +183,10 @@ function FilterBar() {
           value={filters.startDate}
           onChange={handleDateChange}
           max={filters.endDate || new Date().toISOString().split("T")[0]}
-          className="px-3 py-2 border border-gray-200 rounded-xl text-sm
-                     outline-none transition-colors bg-white
-                     focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400
-                     text-gray-600"
+          className="px-3 py-2 border border-slate-700 rounded-xl text-sm
+             outline-none transition-colors bg-slate-800/50
+             focus:ring-2 focus:ring-teal-500/20 focus:border-teal-400
+             text-slate-300 scheme-dark"
         />
 
         {/* End date */}
@@ -181,10 +197,10 @@ function FilterBar() {
           onChange={handleDateChange}
           min={filters.startDate}
           max={new Date().toISOString().split("T")[0]}
-          className="px-3 py-2 border border-gray-200 rounded-xl text-sm
-                     outline-none transition-colors bg-white
-                     focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400
-                     text-gray-600"
+          className="px-3 py-2 border border-slate-700 rounded-xl text-sm
+                     outline-none transition-colors bg-slate-800/50
+                     focus:ring-2 focus:ring-teal-500/20 focus:border-teal-400
+                     text-slate-300 scheme-dark"
         />
       </div>
     </div>

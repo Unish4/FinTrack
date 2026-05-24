@@ -24,8 +24,8 @@ function CustomTooltip({ active, payload, label }) {
   return (
     <div
       className="
-        bg-white/95 backdrop-blur-sm
-        border border-gray-100
+        bg-slate-900/95 backdrop-blur-sm
+        border border-slate-800
         rounded-xl
         shadow-xl
         p-3
@@ -33,7 +33,7 @@ function CustomTooltip({ active, payload, label }) {
         max-w-57.5
       "
     >
-      <p className="text-xs font-semibold text-gray-600 mb-2">{label}</p>
+      <p className="text-xs font-semibold text-slate-400 mb-2">{label}</p>
 
       <div className="space-y-1.5">
         {payload.map((entry) => (
@@ -47,10 +47,10 @@ function CustomTooltip({ active, payload, label }) {
                 style={{ background: entry.color }}
               />
 
-              <span className="text-gray-500 capitalize">{entry.name}</span>
+              <span className="text-slate-400 capitalize">{entry.name}</span>
             </div>
 
-            <span className="font-semibold text-gray-800">
+            <span className="font-semibold text-slate-200">
               {formatCurrency(entry.value)}
             </span>
           </div>
@@ -61,18 +61,18 @@ function CustomTooltip({ active, payload, label }) {
         <div
           className="
             mt-2 pt-2
-            border-t border-gray-100
+            border-t border-slate-800
             flex items-center justify-between
             text-xs
           "
         >
-          <span className="text-gray-500">Net</span>
+          <span className="text-slate-400">Net</span>
 
           <span
             className={`font-semibold ${
               payload[0].value - payload[1].value >= 0
-                ? "text-emerald-600"
-                : "text-red-500"
+                ? "text-teal-400"
+                : "text-rose-400"
             }`}
           >
             {formatCurrency(payload[0].value - payload[1].value)}
@@ -103,20 +103,17 @@ function IncomeExpenseChart({ data, isLoading }) {
   return (
     <div
       className="
-        bg-white
-        rounded-2xl
-        border border-gray-100
-        shadow-sm
-        p-4 sm:p-6
+        bg-transparent
+        flex flex-col h-full
       "
     >
       {/* Header */}
       <div className="mb-5 sm:mb-6">
-        <h3 className="text-sm sm:text-base font-semibold text-gray-900">
+        <h3 className="text-sm sm:text-base font-semibold text-white">
           Income vs Expenses Trend
         </h3>
 
-        <p className="text-xs sm:text-sm text-gray-400 mt-1">
+        <p className="text-xs sm:text-sm text-slate-400 mt-1">
           How your cash flow changes over time
         </p>
       </div>
@@ -150,8 +147,8 @@ function IncomeExpenseChart({ data, isLoading }) {
               {/* Gradients */}
               <defs>
                 <linearGradient id="incomeGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#10b981" stopOpacity={0.18} />
-                  <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
+                  <stop offset="5%" stopColor="#2dd4bf" stopOpacity={0.18} />
+                  <stop offset="95%" stopColor="#2dd4bf" stopOpacity={0} />
                 </linearGradient>
 
                 <linearGradient
@@ -161,15 +158,15 @@ function IncomeExpenseChart({ data, isLoading }) {
                   x2="0"
                   y2="1"
                 >
-                  <stop offset="5%" stopColor="#ef4444" stopOpacity={0.18} />
-                  <stop offset="95%" stopColor="#ef4444" stopOpacity={0} />
+                  <stop offset="5%" stopColor="#fb7185" stopOpacity={0.18} />
+                  <stop offset="95%" stopColor="#fb7185" stopOpacity={0} />
                 </linearGradient>
               </defs>
 
               <CartesianGrid
                 strokeDasharray="3 3"
                 vertical={false}
-                stroke="#f3f4f6"
+                stroke="#334155"
               />
 
               <XAxis
@@ -177,7 +174,7 @@ function IncomeExpenseChart({ data, isLoading }) {
                 interval={0}
                 tick={{
                   fontSize: isMobile ? 10 : 12,
-                  fill: "#9ca3af",
+                  fill: "#94a3b8",
                 }}
                 axisLine={false}
                 tickLine={false}
@@ -187,18 +184,18 @@ function IncomeExpenseChart({ data, isLoading }) {
                 width={isMobile ? 40 : 60}
                 tick={{
                   fontSize: isMobile ? 10 : 12,
-                  fill: "#9ca3af",
+                  fill: "#94a3b8",
                 }}
                 axisLine={false}
                 tickLine={false}
                 tickFormatter={(value) =>
-                  value >= 1000 ? `$${(value / 1000).toFixed(1)}k` : `$${value}`
+                  value >= 1000 ? `${(value / 1000).toFixed(1)}k` : `${value}`
                 }
               />
 
               <Tooltip
                 cursor={{
-                  stroke: "#d1d5db",
+                  stroke: "#475569",
                   strokeWidth: 1,
                 }}
                 content={<CustomTooltip />}
@@ -216,7 +213,7 @@ function IncomeExpenseChart({ data, isLoading }) {
                 formatter={(value) => (
                   <span
                     style={{
-                      color: "#6b7280",
+                      color: "#94a3b8",
                       textTransform: "capitalize",
                     }}
                   >
@@ -229,11 +226,11 @@ function IncomeExpenseChart({ data, isLoading }) {
               <Area
                 type="monotone"
                 dataKey="income"
-                stroke="#10b981"
+                stroke="#2dd4bf"
                 strokeWidth={2.5}
                 fill="url(#incomeGradient)"
                 dot={{
-                  fill: "#10b981",
+                  fill: "#2dd4bf",
                   strokeWidth: 0,
                   r: isMobile ? 2 : 3,
                 }}
@@ -247,11 +244,11 @@ function IncomeExpenseChart({ data, isLoading }) {
               <Area
                 type="monotone"
                 dataKey="expense"
-                stroke="#ef4444"
+                stroke="#fb7185"
                 strokeWidth={2.5}
                 fill="url(#expenseGradient)"
                 dot={{
-                  fill: "#ef4444",
+                  fill: "#fb7185",
                   strokeWidth: 0,
                   r: isMobile ? 2 : 3,
                 }}

@@ -39,11 +39,11 @@ function Analytics() {
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-6 sm:mb-8">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
             Analytics
           </h1>
 
-          <p className="text-sm sm:text-base text-gray-500 mt-1">
+          <p className="text-sm sm:text-base text-slate-400 mt-1">
             Your financial trends and insights
           </p>
         </div>
@@ -53,7 +53,7 @@ function Analytics() {
           className="
             flex items-center justify-between
             w-full sm:w-auto
-            bg-white border border-gray-200
+            bg-slate-900/60 border border-slate-800 backdrop-blur-sm
             rounded-2xl px-3 py-2
             shadow-sm
           "
@@ -63,16 +63,16 @@ function Analytics() {
             disabled={selectedYear <= 2020}
             className="
               p-2 rounded-xl
-              hover:bg-gray-100
+              hover:bg-slate-800 text-slate-400 hover:text-white
               transition
               disabled:opacity-30
               disabled:cursor-not-allowed
             "
           >
-            <ChevronLeft size={18} className="text-gray-600" />
+            <ChevronLeft size={18} />
           </button>
 
-          <span className="text-sm sm:text-base font-semibold text-gray-800 min-w-15 text-center">
+          <span className="text-sm sm:text-base font-semibold text-slate-200 min-w-15 text-center">
             {selectedYear}
           </span>
 
@@ -81,13 +81,13 @@ function Analytics() {
             disabled={selectedYear >= currentYear}
             className="
               p-2 rounded-xl
-              hover:bg-gray-100
+              hover:bg-slate-800 text-slate-400 hover:text-white
               transition
               disabled:opacity-30
               disabled:cursor-not-allowed
             "
           >
-            <ChevronRight size={18} className="text-gray-600" />
+            <ChevronRight size={18} />
           </button>
         </div>
       </div>
@@ -98,27 +98,27 @@ function Analytics() {
           {
             label: `${selectedYear} Income`,
             value: formatCurrency(yearTotals.income),
-            color: "text-emerald-600",
-            bg: "bg-emerald-50",
+            color: "text-teal-400",
+            bg: "bg-teal-500/10",
           },
           {
             label: `${selectedYear} Expenses`,
             value: formatCurrency(yearTotals.expense),
-            color: "text-red-500",
-            bg: "bg-red-50",
+            color: "text-rose-400",
+            bg: "bg-rose-500/10",
           },
           {
             label: "Net Balance",
             value: formatCurrency(yearBalance),
-            color: yearBalance >= 0 ? "text-indigo-600" : "text-red-500",
-            bg: yearBalance >= 0 ? "bg-indigo-50" : "bg-red-50",
+            color: yearBalance >= 0 ? "text-cyan-400" : "text-rose-400",
+            bg: yearBalance >= 0 ? "bg-cyan-500/10" : "bg-rose-500/10",
           },
         ].map(({ label, value, color, bg }) => (
           <div
             key={label}
             className="
-              bg-white
-              border border-gray-100
+              bg-slate-900/60
+              border border-slate-800 backdrop-blur-sm
               rounded-2xl
               p-5
               shadow-sm
@@ -149,13 +149,13 @@ function Analytics() {
       {/* Charts */}
       <div className="space-y-6">
         {/* Full Width Chart */}
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-3 sm:p-5 overflow-hidden">
+        <div className="bg-slate-900/60 rounded-2xl border border-slate-800 backdrop-blur-sm shadow-sm p-3 sm:p-5 overflow-hidden">
           <MonthlyChart data={monthlyData} isLoading={isMonthlyLoading} />
         </div>
 
         {/* Bottom Charts */}
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-3 sm:p-5 overflow-hidden">
+          <div className="bg-slate-900/60 rounded-2xl border border-slate-800 backdrop-blur-sm shadow-sm p-3 sm:p-5 overflow-hidden">
             <CategoryPieChart
               expenseData={expenseCategoryData}
               incomeData={incomeCategoryData}
@@ -163,7 +163,7 @@ function Analytics() {
             />
           </div>
 
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-3 sm:p-5 overflow-hidden">
+          <div className="bg-slate-900/60 rounded-2xl border border-slate-800 backdrop-blur-sm shadow-sm p-3 sm:p-5 overflow-hidden">
             <IncomeExpenseChart
               data={monthlyData}
               isLoading={isMonthlyLoading}

@@ -16,19 +16,19 @@ function ReceiptModal({ isOpen, onClose, url, description }) {
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center
-                 bg-gray-900/50 backdrop-blur-sm p-3 sm:p-4 animate-in fade-in duration-200"
+                 bg-slate-950/80 backdrop-blur-sm p-3 sm:p-4 animate-in fade-in duration-200"
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl ring-1 ring-black/5 overflow-hidden"
+        className="bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl w-full max-w-3xl overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-start justify-between gap-3 p-4 sm:p-5 border-b border-gray-100">
+        <div className="flex items-start justify-between gap-3 p-4 sm:p-5 border-b border-slate-800">
           <div className="min-w-0">
-            <p className="text-xs font-medium text-indigo-600 uppercase tracking-wide">
+            <p className="text-xs font-medium text-teal-400 uppercase tracking-wide">
               Receipt Preview
             </p>
-            <p className="text-sm sm:text-base font-semibold text-gray-900 truncate mt-0.5">
+            <p className="text-sm sm:text-base font-semibold text-white truncate mt-0.5">
               {description || "Receipt"}
             </p>
           </div>
@@ -37,7 +37,7 @@ function ReceiptModal({ isOpen, onClose, url, description }) {
               href={url}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 px-2.5 py-2 rounded-xl text-xs sm:text-sm text-indigo-600 bg-indigo-50 hover:bg-indigo-100 transition-colors"
+              className="inline-flex items-center gap-1.5 px-2.5 py-2 rounded-xl text-xs sm:text-sm text-teal-400 bg-teal-500/10 hover:bg-teal-500/20 transition-colors"
               title="Open original"
             >
               <span className="hidden sm:inline">Open</span>
@@ -45,14 +45,14 @@ function ReceiptModal({ isOpen, onClose, url, description }) {
             </a>
             <button
               onClick={onClose}
-              className="p-2 rounded-xl text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
+              className="p-2 rounded-xl text-slate-500 hover:text-slate-300 hover:bg-slate-800 transition-colors"
             >
               <X size={16} />
             </button>
           </div>
         </div>
-        <div className="p-3 sm:p-4 bg-gray-50">
-          <div className="rounded-2xl border border-gray-200 bg-white overflow-hidden flex items-center justify-center min-h-60 sm:min-h-80 max-h-[70vh]">
+        <div className="p-3 sm:p-4 border-slate-800">
+          <div className="rounded-2xl border border-slate-800 bg-slate-950/50 overflow-hidden flex items-center justify-center min-h-60 sm:min-h-80 max-h-[70vh]">
             <img
               src={url}
               alt={description || "Receipt image"}

@@ -24,8 +24,8 @@ function CustomTooltip({ active, payload, label }) {
   return (
     <div
       className="
-        bg-white/95 backdrop-blur-sm
-        border border-gray-100
+        bg-slate-900/95 backdrop-blur-sm
+        border border-slate-800
         rounded-xl
         shadow-xl
         p-3
@@ -33,7 +33,7 @@ function CustomTooltip({ active, payload, label }) {
         max-w-55
       "
     >
-      <p className="text-xs font-semibold text-gray-600 mb-2">{label}</p>
+      <p className="text-xs font-semibold text-slate-400 mb-2">{label}</p>
 
       <div className="space-y-1.5">
         {payload.map((entry) => (
@@ -47,10 +47,10 @@ function CustomTooltip({ active, payload, label }) {
                 style={{ background: entry.color }}
               />
 
-              <span className="text-gray-500 capitalize">{entry.name}</span>
+              <span className="text-slate-400 capitalize">{entry.name}</span>
             </div>
 
-            <span className="font-semibold text-gray-800">
+            <span className="font-semibold text-slate-200">
               {formatCurrency(entry.value)}
             </span>
           </div>
@@ -80,20 +80,17 @@ function MonthlyChart({ data, isLoading }) {
   return (
     <div
       className="
-        bg-white
-        rounded-2xl
-        border border-gray-100
-        shadow-sm
-        p-4 sm:p-6
+        bg-transparent
+        flex flex-col h-full
       "
     >
       {/* Header */}
       <div className="mb-5 sm:mb-6">
-        <h3 className="text-sm sm:text-base font-semibold text-gray-900">
+        <h3 className="text-sm sm:text-base font-semibold text-white">
           Monthly Cash Flow
         </h3>
 
-        <p className="text-xs sm:text-sm text-gray-400 mt-1">
+        <p className="text-xs sm:text-sm text-slate-400 mt-1">
           Income vs expenses by month
         </p>
       </div>
@@ -126,14 +123,14 @@ function MonthlyChart({ data, isLoading }) {
               <CartesianGrid
                 strokeDasharray="3 3"
                 vertical={false}
-                stroke="#f3f4f6"
+                stroke="#334155"
               />
 
               <XAxis
                 dataKey="month"
                 tick={{
                   fontSize: isMobile ? 10 : 12,
-                  fill: "#9ca3af",
+                  fill: "#94a3b8",
                 }}
                 axisLine={false}
                 tickLine={false}
@@ -144,18 +141,18 @@ function MonthlyChart({ data, isLoading }) {
                 width={isMobile ? 40 : 60}
                 tick={{
                   fontSize: isMobile ? 10 : 12,
-                  fill: "#9ca3af",
+                  fill: "#94a3b8",
                 }}
                 axisLine={false}
                 tickLine={false}
                 tickFormatter={(value) =>
-                  value >= 1000 ? `$${(value / 1000).toFixed(1)}k` : `$${value}`
+                  value >= 1000 ? `${(value / 1000).toFixed(1)}k` : `${value}`
                 }
               />
 
               <Tooltip
                 cursor={{
-                  fill: "rgba(243,244,246,0.4)",
+                  fill: "rgba(51,65,85,0.4)",
                 }}
                 content={<CustomTooltip />}
               />
@@ -172,7 +169,7 @@ function MonthlyChart({ data, isLoading }) {
                 formatter={(value) => (
                   <span
                     style={{
-                      color: "#6b7280",
+                      color: "#94a3b8",
                       textTransform: "capitalize",
                     }}
                   >
@@ -184,7 +181,7 @@ function MonthlyChart({ data, isLoading }) {
               {/* Income */}
               <Bar
                 dataKey="income"
-                fill="#10b981"
+                fill="#2dd4bf"
                 radius={[6, 6, 0, 0]}
                 maxBarSize={isMobile ? 18 : 34}
               />
@@ -192,7 +189,7 @@ function MonthlyChart({ data, isLoading }) {
               {/* Expense */}
               <Bar
                 dataKey="expense"
-                fill="#ef4444"
+                fill="#fb7185"
                 radius={[6, 6, 0, 0]}
                 maxBarSize={isMobile ? 18 : 34}
               />

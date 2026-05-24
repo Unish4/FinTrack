@@ -37,8 +37,8 @@ function CustomTooltip({ active, payload }) {
   return (
     <div
       className="
-        bg-white/95 backdrop-blur-sm
-        border border-gray-100
+        bg-slate-900/95 backdrop-blur-sm
+        border border-slate-800
         rounded-xl
         shadow-xl
         p-3
@@ -51,14 +51,14 @@ function CustomTooltip({ active, payload }) {
           style={{ background: data.payload.fill }}
         />
 
-        <span className="text-xs font-semibold text-gray-700 wrap-break-words">
+        <span className="text-xs font-semibold text-slate-200 wrap-break-words">
           {data.name}
         </span>
       </div>
 
-      <p className="text-xs text-gray-500">
+      <p className="text-xs text-slate-400">
         {formatCurrency(data.value)}{" "}
-        <span className="text-gray-400">({data.payload.percentage}%)</span>
+        <span className="text-slate-500">({data.payload.percentage}%)</span>
       </p>
     </div>
   );
@@ -121,11 +121,8 @@ function CategoryPieChart({ expenseData, incomeData, isLoading }) {
   return (
     <div
       className="
-        bg-white
-        rounded-2xl
-        border border-gray-100
-        shadow-sm
-        p-4 sm:p-6
+        bg-transparent
+        flex flex-col h-full
       "
     >
       {/* Header */}
@@ -137,15 +134,15 @@ function CategoryPieChart({ expenseData, incomeData, isLoading }) {
         "
       >
         <div>
-          <h3 className="text-sm sm:text-base font-semibold text-gray-900">
+          <h3 className="text-sm sm:text-base font-semibold text-white">
             Category Breakdown
           </h3>
 
-          <p className="text-xs text-gray-400 mt-1">Spending by category</p>
+          <p className="text-xs text-slate-400 mt-1">Spending by category</p>
         </div>
 
         {/* Toggle */}
-        <div className="flex bg-gray-100 rounded-xl p-1 w-full sm:w-auto">
+        <div className="flex bg-slate-800/50 rounded-xl p-1 w-full sm:w-auto">
           {["expense", "income"].map((type) => (
             <button
               key={type}
@@ -159,8 +156,8 @@ function CategoryPieChart({ expenseData, incomeData, isLoading }) {
                 transition-all
                 ${
                   activeType === type
-                    ? "bg-white text-gray-900 shadow-sm"
-                    : "text-gray-500 hover:text-gray-700"
+                    ? "bg-slate-700 text-white shadow-sm"
+                    : "text-slate-400 hover:text-slate-200"
                 }
               `}
             >
@@ -223,13 +220,13 @@ function CategoryPieChart({ expenseData, incomeData, isLoading }) {
                 formatter={(value, entry) => (
                   <span
                     style={{
-                      color: "#6b7280",
+                      color: "#94a3b8",
                     }}
                   >
                     {value}
                     <span
                       style={{
-                        color: "#9ca3af",
+                        color: "#64748b",
                         marginLeft: 4,
                       }}
                     >

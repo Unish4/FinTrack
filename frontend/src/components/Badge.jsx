@@ -1,14 +1,14 @@
 function Badge({ variant = "default", size = "sm", children }) {
   const variants = {
-    income: "bg-emerald-50 text-emerald-700 border border-emerald-100",
-    expense: "bg-red-50 text-red-600 border border-red-100",
-    default: "bg-gray-100 text-gray-600 border border-gray-200",
-    indigo: "bg-indigo-50 text-indigo-700 border border-indigo-100",
+    income: "bg-teal-500/10 text-teal-400 border border-teal-500/20",
+    expense: "bg-rose-500/10 text-rose-400 border border-rose-500/20",
+    default: "bg-slate-800/50 text-slate-300 border border-slate-700",
+    indigo: "bg-cyan-500/10 text-cyan-400 border border-cyan-500/20",
   };
 
   const sizes = {
-    sm: "text-xs px-2 py-0.5",
-    md: "text-sm px-2.5 py-1",
+    sm: "text-[13px] px-2.5 py-0.5",
+    md: "text-sm px-3 py-1",
   };
 
   return (

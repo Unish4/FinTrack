@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="./logo.png" alt="FinTrack Logo" width="80" />
+<img src="./frontend//public/logo.png" alt="FinTrack Logo" width="80" />
 
 # FinTrack
 

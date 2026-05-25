@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Menu } from "lucide-react";
 import Sidebar from "./Sidebar";
 import { UserButton } from "@clerk/react";
+import { Link } from "react-router";
 
 const MainLayout = ({ children }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -23,9 +24,9 @@ const MainLayout = ({ children }) => {
             >
               <Menu size={24} />
             </button>{" "}
-            <span className="font-serif text-slate-100 tracking-tight text-lg">
-              FinTrack
-            </span>
+            <Link to="/dashboard" className="font-serif text-lg tracking-tight text-white">
+                FinTrack
+              </Link>
           </div>
 
           <UserButton

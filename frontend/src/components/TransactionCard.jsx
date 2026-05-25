@@ -14,7 +14,12 @@ import Badge from "./Badge.jsx";
 import ConfirmDialog from "./ConfirmDialog.jsx";
 import ReceiptModal from "./ReceiptModal.jsx";
 
-function TransactionCard({ transaction, onEdit, onUploadReceipt }) {
+function TransactionCard({
+  transaction,
+  onEdit,
+  onUploadReceipt,
+  hideDate = false,
+}) {
   const { removeTransaction } = useTransactionStore();
   const [showConfirm, setShowConfirm] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -31,11 +36,13 @@ function TransactionCard({ transaction, onEdit, onUploadReceipt }) {
   };
 
   return (
-    <div className={`group flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 p-4 md:p-5 rounded-2xl border transition-all duration-300 relative overflow-hidden ${
-      isIncome
-        ? "border-slate-800 bg-slate-900/40 hover:border-teal-500/30 hover:bg-teal-500/[0.04]"
-        : "border-slate-800 bg-slate-900/40 hover:border-rose-500/25 hover:bg-rose-500/[0.04]"
-    }`}>
+    <div
+      className={`group flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 p-4 md:p-5 rounded-2xl border transition-all duration-300 relative overflow-hidden ${
+        isIncome
+          ? "border-slate-800 bg-slate-900/40 hover:border-teal-500/30 hover:bg-teal-500/4"
+          : "border-slate-800 bg-slate-900/40 hover:border-rose-500/25 hover:bg-rose-500/4"
+      }`}
+    >
       {/* Decorative Accent Line */}
       <div
         className={`absolute left-0 top-0 bottom-0 w-1 sm:w-1.5 transition-colors duration-300 ${
@@ -45,34 +52,33 @@ function TransactionCard({ transaction, onEdit, onUploadReceipt }) {
         }`}
       />
 
-      <div className="flex items-center justify-between w-full sm:w-auto">
-        {/* Icon Circle */}
-        <div
-          className={`w-10 h-10 md:w-12 md:h-12 rounded-xl flex items-center justify-center shrink-0 ml-1 sm:ml-0 transition-colors duration-300 ${
-            isIncome
-              ? "bg-teal-500/10 text-teal-400 group-hover:bg-teal-500/20"
-              : "bg-rose-500/10 text-rose-400 group-hover:bg-rose-500/20"
-          }`}
-        >
-          {isIncome ? <ArrowUpRight size={20} /> : <ArrowDownRight size={20} />}
-        </div>
-
-        {/* Show amount top right on mobile only */}
-        <span
-          className={`sm:hidden text-lg font-bold tracking-tight ${
-            isIncome ? "text-teal-400" : "text-rose-400"
-          }`}
-        >
-          {isIncome ? "+" : "-"}
-          {formatCurrency(transaction.amount)}
-        </span>
+      {/* Icon Circle (Desktop only) */}
+      <div
+        className={`hidden sm:flex w-10 h-10 md:w-12 md:h-12 rounded-xl items-center justify-center shrink-0 ml-1 sm:ml-0 transition-colors duration-300 ${
+          isIncome
+            ? "bg-teal-500/10 text-teal-400 group-hover:bg-teal-500/20"
+            : "bg-rose-500/10 text-rose-400 group-hover:bg-rose-500/20"
+        }`}
+      >
+        {isIncome ? <ArrowUpRight size={20} /> : <ArrowDownRight size={20} />}
       </div>
 
       {/* Main info */}
       <div className="flex-1 min-w-0 flex flex-col justify-center pl-1 sm:pl-0">
-        <p className="text-base font-semibold text-slate-200 truncate mb-1">
-          {transaction.description}
-        </p>
+        <div className="flex justify-between items-start w-full gap-2">
+          <p className="text-base font-semibold text-slate-200 truncate mb-1">
+            {transaction.description}
+          </p>
+          {/* Show amount top right on mobile only */}
+          <span
+            className={`sm:hidden text-lg font-bold tracking-tight shrink-0 ${
+              isIncome ? "text-teal-400" : "text-rose-400"
+            }`}
+          >
+            {isIncome ? "+" : "-"}
+            {formatCurrency(transaction.amount)}
+          </span>
+        </div>
 
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-0.5">
           <div className="flex items-center gap-2">
@@ -82,12 +88,14 @@ function TransactionCard({ transaction, onEdit, onUploadReceipt }) {
             <Badge variant="default">{transaction.category}</Badge>
           </div>
 
-          <div className="flex items-center gap-1.5 text-slate-500">
-            <Calendar size={12} className="opacity-70" />
-            <span className="text-xs font-medium">
-              {formatRelativeDate(transaction.date)}
-            </span>
-          </div>
+          {!hideDate && (
+            <div className="flex items-center gap-1.5 text-slate-500">
+              <Calendar size={12} className="opacity-70" />
+              <span className="text-xs font-medium">
+                {formatRelativeDate(transaction.date)}
+              </span>
+            </div>
+          )}
 
           {hasReceipt && (
             <button

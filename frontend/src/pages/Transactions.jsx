@@ -6,7 +6,8 @@ import {
   FileText,
   AlertCircle,
   ArrowLeftRight,
-  Wallet,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react";
 import useTransactionStore from "../store/useTransactionStore.js";
 import TransactionCard from "../components/TransactionCard.jsx";
@@ -15,6 +16,7 @@ import EmptyState from "../components/EmptyState";
 import FilterBar from "../components/FilterBar.jsx";
 import ReceiptUploader from "../components/ReceiptUploader.jsx";
 import { TransactionSkeleton } from "../components/Skeleton.jsx";
+import { groupTransactionsByDate } from "../utils/groupTransactionsByDate.js";
 
 function Transactions() {
   const {
@@ -58,20 +60,29 @@ function Transactions() {
     setReceiptTransaction(null);
   };
 
+  const groupedTransactions = groupTransactionsByDate(transactions);
+  
+  // State for expanded date groups
+  const [expandedDates, setExpandedDates] = useState({});
+
+  const toggleExpand = (dateLabel) => {
+    setExpandedDates((prev) => ({
+      ...prev,
+      [dateLabel]: !prev[dateLabel]
+    }));
+  };
+
   return (
-    <div className="max-w-4xl mx-auto pb-12">
+    <div className="max-w-7xl mx-auto pb-12">
       {/* Page header (Card Style) */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 bg-slate-900/60 p-5 sm:p-6 rounded-2xl border border-slate-800 backdrop-blur-sm shadow-sm">
         <div>
           <div className="flex items-center gap-3">
-            <div className="p-2 sm:p-2.5 bg-teal-500/10 border border-teal-500/20 rounded-xl">
-              <Wallet alt="wallet" className="w-6 h-6 sm:w-7 sm:h-7 object-contain" />
-            </div>
             <h1 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
               Transactions
             </h1>
           </div>
-          <p className="text-sm text-slate-400 mt-2 sm:ml-14">
+          <p className="text-sm text-slate-400 mt-2">
             {pagination?.total > 0
               ? `You have ${pagination.total} transaction${pagination.total !== 1 ? "s" : ""} on record`
               : "No transactions yet"}
@@ -109,7 +120,7 @@ function Transactions() {
             Try again
           </button>
         </div>
-      ) : !transactions || transactions.length === 0 ? (
+      ) : !groupedTransactions || groupedTransactions.length === 0 ? (
         <EmptyState
           icon={ArrowLeftRight}
           title="No transactions yet"
@@ -118,7 +129,7 @@ function Transactions() {
           onAction={handleOpenAdd}
         />
       ) : // Transaction list
-      transactions.length === 0 ? (
+      groupedTransactions.length === 0 ? (
         <EmptyState
           icon={FileText}
           title="No transactions yet"
@@ -128,14 +139,57 @@ function Transactions() {
         />
       ) : (
         <div className="space-y-3">
-          {transactions.map((transaction) => (
-            <TransactionCard
-              key={transaction._id}
-              transaction={transaction}
-              onEdit={handleOpenEdit}
-              onUploadReceipt={handleOpenReceipt}
-            />
-          ))}
+          {groupedTransactions.map(({ dateLabel, transactions: dayTransactions }) => {
+            const isCollapsible = dayTransactions.length > 1;
+            const isExpanded = expandedDates[dateLabel] || !isCollapsible;
+
+            return (
+              <div key={dateLabel}>
+
+                {/* ── Date header ─────────────────────── */}
+                <div 
+                  className={`flex items-center gap-3 mb-3 ${isCollapsible ? 'cursor-pointer select-none group' : ''}`}
+                  onClick={() => isCollapsible && toggleExpand(dateLabel)}
+                >
+                  <span className={`text-xs font-semibold text-gray-400 uppercase
+                                  tracking-wide whitespace-nowrap ${isCollapsible ? 'group-hover:text-teal-400 transition-colors' : ''}`}>
+                    {dateLabel}
+                  </span>
+                  {/* Divider line extending to the right */}
+                  <div className="flex-1 h-px bg-gray-100/10 group-hover:bg-teal-500/20 transition-colors" />
+                  
+                  {isCollapsible && (
+                    <div className="text-gray-400 group-hover:text-teal-400 transition-colors flex items-center gap-1.5">
+                      <DailySubtotal transactions={dayTransactions} />
+                      <span className="text-xs bg-slate-800 px-2 py-0.5 rounded-full group-hover:bg-teal-500/10 transition-colors">
+                        {dayTransactions.length}
+                      </span>
+                      {isExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+                    </div>
+                  )}
+                  {!isCollapsible && (
+                      <DailySubtotal transactions={dayTransactions} />
+                  )}
+                </div>
+
+                {/* ── Cards for this date ─────────────── */}
+                {isExpanded && (
+                  <div className="space-y-2 animate-in fade-in slide-in-from-top-2 duration-300">
+                    {dayTransactions.map((transaction) => (
+                      <TransactionCard
+                        key={transaction._id}
+                        transaction={transaction}
+                        onEdit={handleOpenEdit}
+                        onUploadReceipt={handleOpenReceipt}
+                        // Hide the date on the card — the group header shows it
+                        hideDate
+                      />
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
       )}
 
@@ -179,25 +233,45 @@ function Transactions() {
       />
 
       {/* Receipt Uploader Modal */}
-      {receiptTransaction && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center
-                     bg-gray-900/40 backdrop-blur-sm p-3 sm:p-4 animate-in fade-in duration-200"
-          onClick={handleCloseReceipt}
-        >
+        {receiptTransaction && (
           <div
-            className="bg-white rounded-2xl shadow-2xl ring-1 ring-black/5
-                       w-full max-w-lg max-h-[92vh] overflow-y-auto no-scrollbar"
-            onClick={(e) => e.stopPropagation()}
+            className="fixed inset-0 z-50 flex items-center justify-center
+                       bg-gray-900/40 backdrop-blur-sm p-3 sm:p-4 animate-in fade-in duration-200"
+            onClick={handleCloseReceipt}
           >
-            <ReceiptUploader
-              transaction={receiptTransaction}
-              onClose={handleCloseReceipt}
-            />
+            <div
+              className="bg-white rounded-2xl shadow-2xl ring-1 ring-black/5
+                         w-full max-w-lg max-h-[92vh] overflow-y-auto no-scrollbar"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <ReceiptUploader
+                transaction={receiptTransaction}
+                onClose={handleCloseReceipt}
+              />
+            </div>
           </div>
-        </div>
-      )}
-    </div>
+        )}
+      </div>
+    );
+  }
+  
+  function DailySubtotal({ transactions }) {
+  const net = transactions.reduce((sum, t) => {
+    return t.type === 'income' ? sum + t.amount : sum - t.amount;
+  }, 0);
+
+  const isPositive = net >= 0;
+
+  return (
+    <span className={`text-xs font-semibold whitespace-nowrap
+                      ${isPositive ? 'text-emerald-500' : 'text-red-400'}`}>
+      {isPositive ? '+' : ''}
+      {new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'NPR',
+        minimumFractionDigits: 2,
+      }).format(net)}
+    </span>
   );
 }
 

@@ -8,6 +8,7 @@ import {
   Search,
   ArrowRight,
   Heart,
+  Folders,
 } from "lucide-react";
 import LoadingSpinner from "../components/LoadingSpinner";
 import Navbar from "../components/Navbar";
@@ -50,13 +51,7 @@ const HomePage = () => {
       accent: "cyan",
     },
     {
-      icon: (props) => (
-        <img
-          src="/logo.png"
-          alt="FinTrack Logo"
-          className={`w-6 h-6 object-contain ${props.className || ""}`}
-        />
-      ),
+      icon: Folders,
       title: "Category management",
       description:
         "Organise transactions by category — Food, Transport, Salary, Entertainment and more.",

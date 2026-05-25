@@ -16,3 +16,14 @@ select::-webkit-scrollbar {
 select {
   scrollbar-width: none; /* Firefox */
 }
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1) brightness(100%);
+  opacity: 0.8;
+  cursor: pointer;
+}
+
+input[type="date"] {
+  /* Let text inherit Tailwind colors, avoid color-scheme issues on mobile */
+  background-color: transparent;
+}

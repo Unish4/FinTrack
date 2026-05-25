@@ -1,19 +1,21 @@
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import {
   TrendingUp,
   TrendingDown,
   ArrowRight,
   ArrowUpRight,
   ArrowDownRight,
-  Calendar,
   Receipt,
   FileText,
   Clock,
   Wallet,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react";
 import { Link } from "react-router";
 import useTransactionStore from "../store/useTransactionStore.js";
-import { formatCurrency, formatRelativeDate } from "../utils/formatters.js";
+import { formatCurrency } from "../utils/formatters.js";
+import { groupTransactionsByDate } from "../utils/groupTransactionsByDate.js";
 import EmptyState from "../components/EmptyState";
 import Badge from "../components/Badge.jsx";
 import {
@@ -31,20 +33,34 @@ function Dashboard() {
     isLoading,
   } = useTransactionStore();
 
+  const [expandedDates, setExpandedDates] = React.useState({});
+  
+  const toggleExpand = (dateLabel) => {
+    setExpandedDates((prev) => ({
+      ...prev,
+      [dateLabel]: !prev[dateLabel]
+    }));
+  };
+
   useEffect(() => {
     fetchSummary();
     fetchTransactions();
   }, [fetchSummary, fetchTransactions]);
 
-  const income  = summary?.income  || 0;
+  const income = summary?.income || 0;
   const expense = summary?.expense || 0;
   const balance = summary?.balance || 0;
 
-  const incomeTransactions  = transactions.filter((t) => t.type === "income").length;
-  const expenseTransactions = transactions.filter((t) => t.type === "expense").length;
-  const savingsRate = income > 0
-    ? Math.max(0, Math.round(((income - expense) / income) * 100))
-    : 0;
+  const incomeTransactions = transactions.filter(
+    (t) => t.type === "income",
+  ).length;
+  const expenseTransactions = transactions.filter(
+    (t) => t.type === "expense",
+  ).length;
+  const savingsRate =
+    income > 0
+      ? Math.max(0, Math.round(((income - expense) / income) * 100))
+      : 0;
   const isPositiveBalance = balance >= 0;
 
   const summaryCards = [
@@ -90,9 +106,9 @@ function Dashboard() {
       iconBg: isPositiveBalance
         ? "bg-cyan-500/10 border border-cyan-500/20"
         : "bg-rose-500/10 border border-rose-500/20",
-      iconColor:  isPositiveBalance ? "text-cyan-400"  : "text-rose-400",
-      valueColor: isPositiveBalance ? "text-cyan-300"  : "text-rose-300",
-      orbColor:   isPositiveBalance ? "bg-cyan-500/20" : "bg-rose-500/20",
+      iconColor: isPositiveBalance ? "text-cyan-400" : "text-rose-400",
+      valueColor: isPositiveBalance ? "text-cyan-300" : "text-rose-300",
+      orbColor: isPositiveBalance ? "bg-cyan-500/20" : "bg-rose-500/20",
       shadow: isPositiveBalance
         ? "hover:shadow-[0_8px_32px_-8px_rgba(6,182,212,0.25)]"
         : "hover:shadow-[0_8px_32px_-8px_rgba(244,63,94,0.25)]",
@@ -104,11 +120,10 @@ function Dashboard() {
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 selection:bg-teal-500/30 selection:text-teal-200 relative overflow-x-hidden">
-
       <div className="fixed inset-0 pointer-events-none z-0">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-teal-500/5 rounded-full blur-3xl" />
-        <div className="absolute top-48 left-0 w-[350px] h-[350px] bg-cyan-500/4 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-teal-600/4 rounded-full blur-3xl" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-200 h-100 bg-teal-500/5 rounded-full blur-3xl" />
+        <div className="absolute top-48 left-0 w-87.5 h-87.5 bg-cyan-500/4 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 right-0 w-100 h-100 bg-teal-600/4 rounded-full blur-3xl" />
         <div
           className="absolute inset-0 opacity-[0.025]"
           style={{
@@ -121,7 +136,6 @@ function Dashboard() {
 
       {/* ── Page content ── */}
       <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-16">
-
         {/* ── Page Header ── */}
         <div className="mb-9 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
           <div>
@@ -139,64 +153,99 @@ function Dashboard() {
           {/* Live date chip */}
           <div className="inline-flex items-center gap-2 px-6 py-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-400 text-md font-medium self-start sm:self-auto">
             <Clock size={12} className="text-teal-400 size-5" />
-            {new Date().toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" })}
+            {new Date().toLocaleDateString("en-US", {
+              weekday: "short",
+              month: "short",
+              day: "numeric",
+            })}
           </div>
         </div>
 
         {/* ── Summary Cards ── */}
         {isSummaryLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
-            {[1, 2, 3].map((i) => <SummaryCardSkeleton key={i} />)}
+            {[1, 2, 3].map((i) => (
+              <SummaryCardSkeleton key={i} />
+            ))}
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-5 mb-10">
-            {summaryCards.map(({ label, value, icon: Icon, sub, gradient, border, iconBg, iconColor, valueColor, orbColor, shadow, bar }) => (
-              <div
-                key={label}
-                className={`group relative rounded-2xl border ${border} bg-gradient-to-br ${gradient} bg-slate-900/70 backdrop-blur-sm p-6 overflow-hidden cursor-default transition-all duration-300 hover:-translate-y-1 ${shadow}`}
-              >
-                {/* Top accent bar */}
-                <div className={`absolute top-0 left-0 right-0 h-[2px] ${bar} opacity-60 group-hover:opacity-100 transition-opacity`} />
+            {summaryCards.map(
+              ({
+                label,
+                value,
+                icon: Icon,
+                sub,
+                gradient,
+                border,
+                iconBg,
+                iconColor,
+                valueColor,
+                orbColor,
+                shadow,
+                bar,
+              }) => (
+                <div
+                  key={label}
+                  className={`group relative rounded-2xl border ${border} bg-linear-to-br ${gradient} bg-slate-900/70 backdrop-blur-sm p-6 overflow-hidden cursor-default transition-all duration-300 hover:-translate-y-1 ${shadow}`}
+                >
+                  {/* Top accent bar */}
+                  <div
+                    className={`absolute top-0 left-0 right-0 h-0.5 ${bar} opacity-60 group-hover:opacity-100 transition-opacity`}
+                  />
 
-                {/* Orb glow */}
-                <div className={`absolute -bottom-8 -right-8 w-32 h-32 rounded-full ${orbColor} blur-2xl opacity-40 group-hover:opacity-70 transition-opacity duration-500`} />
+                  {/* Orb glow */}
+                  <div
+                    className={`absolute -bottom-8 -right-8 w-32 h-32 rounded-full ${orbColor} blur-2xl opacity-40 group-hover:opacity-70 transition-opacity duration-500`}
+                  />
 
-                <div className="relative flex items-start justify-between mb-5">
-                  <div className={`w-11 h-11 rounded-xl flex items-center justify-center ${iconBg} transition-transform duration-300 group-hover:scale-110`}>
-                    <Icon size={19} className={iconColor} strokeWidth={2.5} />
+                  <div className="relative flex items-start justify-between mb-5">
+                    <div
+                      className={`w-11 h-11 rounded-xl flex items-center justify-center ${iconBg} transition-transform duration-300 group-hover:scale-110`}
+                    >
+                      <Icon size={19} className={iconColor} strokeWidth={2.5} />
+                    </div>
+                    <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest pt-1">
+                      {label}
+                    </span>
                   </div>
-                  <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest pt-1">
-                    {label}
-                  </span>
-                </div>
 
-                <p className={`relative text-3xl font-extrabold tracking-tight ${valueColor} mb-1.5 tabular-nums`}>
-                  {value}
-                </p>
-                <div className="relative flex items-center gap-1.5">
-                  <span className={`w-1.5 h-1.5 rounded-full ${iconColor} opacity-70`} />
-                  <p className="text-xs font-medium text-slate-500">{sub}</p>
+                  <p
+                    className={`relative text-3xl font-extrabold tracking-tight ${valueColor} mb-1.5 tabular-nums`}
+                  >
+                    {value}
+                  </p>
+                  <div className="relative flex items-center gap-1.5">
+                    <span
+                      className={`w-1.5 h-1.5 rounded-full ${iconColor} opacity-70`}
+                    />
+                    <p className="text-xs font-medium text-slate-500">{sub}</p>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ),
+            )}
           </div>
         )}
 
         {/* ── Recent Transactions ── */}
         <div className="rounded-2xl border border-slate-800 bg-slate-900/60 backdrop-blur-sm overflow-hidden">
-
           {/* Section header */}
           <div className="flex items-center justify-between px-5 sm:px-6 py-4 border-b border-slate-800/80">
             <div className="flex items-center gap-2.5">
-              <div className="w-1.5 h-5 rounded-full bg-gradient-to-b from-teal-400 to-cyan-500" />
-              <h2 className="text-base font-bold text-white tracking-tight">Recent Transactions</h2>
+              <div className="w-1.5 h-5 rounded-full bg-linear-to-b from-teal-400 to-cyan-500" />
+              <h2 className="text-base font-bold text-white tracking-tight">
+                Recent Transactions
+              </h2>
             </div>
             <Link
               to="/transactions"
               className="inline-flex items-center gap-1.5 text-xs font-bold text-teal-400 hover:text-teal-300 transition-colors group px-3 py-1.5 rounded-lg hover:bg-teal-500/10 border border-transparent hover:border-teal-500/20"
             >
               View all
-              <ArrowRight size={13} className="group-hover:translate-x-0.5 transition-transform" />
+              <ArrowRight
+                size={13}
+                className="group-hover:translate-x-0.5 transition-transform"
+              />
             </Link>
           </div>
 
@@ -205,7 +254,9 @@ function Dashboard() {
             {isLoading ? (
               <div className="space-y-2">
                 {[1, 2, 3, 4, 5].map((i) => (
-                  <div key={i} className="py-1"><TransactionSkeleton /></div>
+                  <div key={i} className="py-1">
+                    <TransactionSkeleton />
+                  </div>
                 ))}
               </div>
             ) : transactions.length === 0 ? (
@@ -219,67 +270,131 @@ function Dashboard() {
                 />
               </div>
             ) : (
-              <div className="space-y-2">
-                {transactions.slice(0, 5).map((t) => {
-                  const isIncome = t.type === "income";
-                  return (
-                    <div
-                      key={t._id}
-                      className={`group relative flex flex-col sm:flex-row sm:items-center gap-3 p-6 rounded-xl border transition-all duration-200 overflow-hidden cursor-default
-                        ${isIncome
-                          ? "border-slate-800 bg-slate-900/40 hover:border-teal-500/30 hover:bg-teal-500/[0.04]"
-                          : "border-slate-800 bg-slate-900/40 hover:border-rose-500/25 hover:bg-rose-500/[0.04]"
-                        }`}
-                    >
-                      {/* Left accent bar */}
-                      <div className={`absolute left-0 top-0 bottom-0 w-1.5 rounded-l-xl ${isIncome ? "bg-teal-500" : "bg-rose-500"}`} />
+              (() => {
+                const recentTransactions = transactions.slice(0, 5);
+                const groupedTransactions =
+                  groupTransactionsByDate(recentTransactions);
+                return (
+                  <div className="space-y-3 mt-1">
+                    {groupedTransactions.map(
+                      ({ dateLabel, transactions: dayTransactions }) => {
+                        const isCollapsible = dayTransactions.length > 1;
+                        const isExpanded = expandedDates[dateLabel] || !isCollapsible;
 
-                      {/* Icon + mobile amount row */}
-                      <div className="flex items-center justify-between w-full sm:w-auto pl-2 sm:pl-1">
-                        <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 transition-all duration-200
-                          ${isIncome
-                            ? "bg-teal-500/10 text-teal-400 group-hover:bg-teal-500/20 group-hover:scale-110"
-                            : "bg-rose-500/10 text-rose-400 group-hover:bg-rose-500/20 group-hover:scale-110"
-                          }`}
-                        >
-                          {isIncome ? <ArrowUpRight size={16} /> : <ArrowDownRight size={16} />}
-                        </div>
-                        <span className={`sm:hidden text-sm font-bold tabular-nums ${isIncome ? "text-teal-400" : "text-rose-400"}`}>
-                          {isIncome ? "+" : "−"}{formatCurrency(t.amount)}
-                        </span>
-                      </div>
+                        return (
+                        <div key={dateLabel}>
+                          {/* Date header */}
+                          <div 
+                            className={`flex items-center gap-3 mb-2 ${isCollapsible ? 'cursor-pointer select-none group' : ''}`}
+                            onClick={() => isCollapsible && toggleExpand(dateLabel)}
+                          >
+                            <span className={`text-xs font-semibold text-gray-400 uppercase tracking-wide whitespace-nowrap ${isCollapsible ? 'group-hover:text-teal-400 transition-colors' : ''}`}>
+                              {dateLabel}
+                            </span>
+                            <div className="flex-1 h-px bg-slate-800 group-hover:bg-teal-500/20 transition-colors" />
 
-                      {/* Description + meta */}
-                      <div className="flex-1 min-w-0 pl-1 sm:pl-0">
-                        <p className="text-sm font-semibold text-slate-200 truncate mb-1.5">
-                          {t.description}
-                        </p>
-                        <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1">
-                          <Badge variant={isIncome ? "income" : "expense"}>{t.type}</Badge>
-                          <Badge variant="default">{t.category}</Badge>
-                          <div className="flex items-center gap-1 text-slate-500">
-                            <Calendar size={10} />
-                            <span className="text-[11px] font-medium">{formatRelativeDate(t.date)}</span>
+                            {isCollapsible && (
+                              <div className="text-gray-400 group-hover:text-teal-400 transition-colors flex items-center gap-1.5">
+                                <span className="text-xs bg-slate-800 px-2 py-0.5 rounded-full group-hover:bg-teal-500/10 transition-colors">
+                                  {dayTransactions.length}
+                                </span>
+                                {isExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+                              </div>
+                            )}
                           </div>
-                          {t.receipt?.url && (
-                            <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
-                              <Receipt size={10} />
-                              <span className="text-[11px] font-medium">Receipt</span>
+
+                          {/* Cards for this date */}
+                          {isExpanded && (
+                            <div className="space-y-2 animate-in fade-in slide-in-from-top-2 duration-300">
+                              {dayTransactions.map((t) => {
+                                const isIncome = t.type === "income";
+                                return (
+                                  <div
+                                    key={t._id}
+                                  className={`group relative flex flex-col sm:flex-row sm:items-center gap-3 p-4 sm:p-6 rounded-xl border transition-all duration-200 overflow-hidden cursor-default
+                                ${
+                                  isIncome
+                                    ? "border-slate-800 bg-slate-900/40 hover:border-teal-500/30 hover:bg-teal-500/4"
+                                    : "border-slate-800 bg-slate-900/40 hover:border-rose-500/25 hover:bg-rose-500/4"
+                                }`}
+                                >
+                                  {/* Left accent bar */}
+                                  <div
+                                    className={`absolute left-0 top-0 bottom-0 w-1 sm:w-1.5 rounded-l-xl ${isIncome ? "bg-teal-500" : "bg-rose-500"}`}
+                                  />
+
+                                  {/* Desktop Icon */}
+                                  <div
+                                    className={`hidden sm:flex w-9 h-9 rounded-lg items-center justify-center shrink-0 transition-all duration-200 ml-1 sm:ml-0
+                                ${
+                                  isIncome
+                                    ? "bg-teal-500/10 text-teal-400 group-hover:bg-teal-500/20 group-hover:scale-110"
+                                    : "bg-rose-500/10 text-rose-400 group-hover:bg-rose-500/20 group-hover:scale-110"
+                                }`}
+                                  >
+                                    {isIncome ? (
+                                      <ArrowUpRight size={16} />
+                                    ) : (
+                                      <ArrowDownRight size={16} />
+                                    )}
+                                  </div>
+
+                                  {/* Description + meta */}
+                                  <div className="flex-1 min-w-0 flex flex-col justify-center pl-1 sm:pl-0 w-full">
+                                    <div className="flex justify-between items-start w-full gap-2 mb-1.5">
+                                      <p className="text-sm font-semibold text-slate-200 truncate pr-2">
+                                        {t.description}
+                                      </p>
+                                      {/* Mobile amount */}
+                                      <span
+                                        className={`sm:hidden text-base font-bold tabular-nums shrink-0 ${isIncome ? "text-teal-400" : "text-rose-400"}`}
+                                      >
+                                        {isIncome ? "+" : "−"}
+                                        {formatCurrency(t.amount)}
+                                      </span>
+                                    </div>
+                                    <div className="flex flex-wrap items-center gap-x-2 gap-y-1.5">
+                                      <Badge
+                                        variant={
+                                          isIncome ? "income" : "expense"
+                                        }
+                                      >
+                                        {t.type}
+                                      </Badge>
+                                      <Badge variant="default">
+                                        {t.category}
+                                      </Badge>
+                                      {t.receipt?.url && (
+                                        <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+                                          <Receipt size={10} />
+                                          <span className="text-[11px] font-medium">
+                                            Receipt
+                                          </span>
+                                        </div>
+                                      )}
+                                    </div>
+                                  </div>
+
+                                  {/* Desktop amount */}
+                                  <div className="hidden sm:flex items-center justify-end shrink-0 pl-2">
+                                    <span
+                                      className={`text-sm font-extrabold tracking-tight tabular-nums text-right ${isIncome ? "text-teal-400" : "text-rose-400"}`}
+                                    >
+                                      {isIncome ? "+" : "−"}
+                                      {formatCurrency(t.amount)}
+                                    </span>
+                                  </div>
+                                </div>
+                              );
+                            })}
                             </div>
                           )}
                         </div>
-                      </div>
-
-                      {/* Desktop amount */}
-                      <div className="hidden sm:flex items-center shrink-0">
-                        <span className={`text-sm font-extrabold tracking-tight tabular-nums ${isIncome ? "text-teal-400" : "text-rose-400"}`}>
-                          {isIncome ? "+" : "−"}{formatCurrency(t.amount)}
-                        </span>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
+                      );
+                    })}
+                  </div>
+                );
+              })()
             )}
           </div>
         </div>

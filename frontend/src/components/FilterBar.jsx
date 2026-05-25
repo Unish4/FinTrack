@@ -186,7 +186,7 @@ function FilterBar() {
           className="px-3 py-2 border border-slate-700 rounded-xl text-sm
              outline-none transition-colors bg-slate-800/50
              focus:ring-2 focus:ring-teal-500/20 focus:border-teal-400
-             text-slate-300 scheme-dark"
+             text-slate-300"
         />
 
         {/* End date */}
@@ -200,7 +200,7 @@ function FilterBar() {
           className="px-3 py-2 border border-slate-700 rounded-xl text-sm
                      outline-none transition-colors bg-slate-800/50
                      focus:ring-2 focus:ring-teal-500/20 focus:border-teal-400
-                     text-slate-300 scheme-dark"
+                     text-slate-300"
         />
       </div>
     </div>

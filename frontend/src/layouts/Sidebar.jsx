@@ -1,4 +1,4 @@
-import { NavLink } from "react-router";
+import { Link, NavLink } from "react-router";
 import { UserButton, useUser } from "@clerk/react";
 import { LayoutDashboard, ArrowLeftRight, BarChart2, X } from "lucide-react";
 
@@ -37,9 +37,9 @@ function Sidebar({ isOpen, onClose }) {
                 className="w-5 h-5 object-contain"
               />
 
-              <span className="text-xl font-serif text-white tracking-tight">
+              <Link to="/dashboard" className="font-serif text-lg tracking-tight text-white">
                 FinTrack
-              </span>
+              </Link>
             </div>
             {/* Mobile Close Button */}
             <button

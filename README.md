@@ -28,7 +28,7 @@ Track income and expenses, visualize spending patterns, and attach receipts — 
 
 |              Add Transaction               |                 Receipt Upload                 |
 | :----------------------------------------: | :--------------------------------------------: |
-| ![Modal](./frontend/screenshots/modal.png) | ![Receipt](./frontend/screenshots/receipt.png) |
+| ![Modal](./frontend/screenshots/model.png) | ![Receipt](./frontend/screenshots/receipt.png) |
 
 ---
 
